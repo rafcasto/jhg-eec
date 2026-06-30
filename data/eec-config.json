@@ -1,0 +1,159 @@
+{
+  "updatedAt": "2026-07-01T00:00:00.000Z",
+  "variants": {
+    "A": {
+      "key": "A",
+      "name": "The Job Hacker Kickstarter (v4)",
+      "sequence": "kickstarter",
+      "eecName": "KICKSTARTER",
+      "versionLabel": "v4",
+      "enabled": true,
+      "weight": 50,
+      "content": {
+        "bookTitle": "THE JOB HACKER KICKSTARTER",
+        "bookSubtitle": "7 STEPS TO LAND A JOB YOU LOVE, AT THE SALARY YOU DESERVE, IN THE AI ERA",
+        "heroTitle": "How To Land A Job You Love, At The Salary You Deserve, In The AI Era",
+        "heroSubtitle": "A FREE 7-lesson email course that hands you the modern job-search playbook — even if the old one stopped working for you.",
+        "ctaButton": "SEND ME LESSON 1 →",
+        "emailPlaceholder": "Enter your email",
+        "createdBy": "Created by David Perry & Laurent Simon",
+        "statsHeadline": "This is the exact system we've used to coach 3,000+ professionals across 35 countries to land jobs they love — in 3–8 weeks instead of the ~25-week average.",
+        "stats": [
+          {
+            "value": "3,000+",
+            "label": "Professionals coached"
+          },
+          {
+            "value": "35",
+            "label": "Countries"
+          },
+          {
+            "value": "50+",
+            "label": "Industries"
+          }
+        ],
+        "statsCtaHeadline": "Want free, instant access?",
+        "statsCtaSubhead": "Drop your email here, and we'll send you the first lesson ASAP:",
+        "curriculumEyebrow": "WHAT'S INSIDE",
+        "curriculumHeadline": "Here's everything we're going to cover (for FREE!) over the next 7 lessons:",
+        "curriculum": [
+          {
+            "label": "DAY 1",
+            "title": "The Job Hacker Compass",
+            "desc": "Why \"open to anything\" is quietly killing your search — and the one move that separates a 6-month search from a 6-week one."
+          },
+          {
+            "label": "DAY 2",
+            "title": "Proof of Value",
+            "desc": "Nobody hires your duties. They buy the result. How to make hiring managers stop scrolling."
+          },
+          {
+            "label": "DAY 3",
+            "title": "The Recruiter Magnet",
+            "desc": "Recruiters search, they don't read. Turn your profile into something they find."
+          },
+          {
+            "label": "DAY 4",
+            "title": "The Application Edge",
+            "desc": "More applications won't fix this. Proof will. How to beat the ATS and the reject pile."
+          },
+          {
+            "label": "DAY 5",
+            "title": "The Hidden Market",
+            "desc": "The best roles are filled before they're posted. The PIE method opens the door."
+          },
+          {
+            "label": "DAY 6",
+            "title": "Interview Mastery",
+            "desc": "An interview isn't a test. The right structure turns it into offers."
+          },
+          {
+            "label": "DAY 7",
+            "title": "The Deal Maximiser",
+            "desc": "Most people leave their biggest raise on the table. The most profitable 20 minutes of your year."
+          }
+        ],
+        "finalCtaHeadline": "Ready to get started?",
+        "successHeadline": "You're in! 🎉",
+        "successBody": "Check your inbox — Lesson 1 of The Job Hacker Kickstarter is on its way. (Peek in spam/promotions if you don't see it in a minute.)"
+      }
+    },
+    "B": {
+      "key": "B",
+      "name": "The AI Job Search Repair Kit (v3)",
+      "sequence": "repairkit",
+      "eecName": "REPAIRKIT",
+      "versionLabel": "v3",
+      "enabled": true,
+      "weight": 50,
+      "content": {
+        "bookTitle": "THE AI JOB SEARCH REPAIR KIT",
+        "bookSubtitle": "THE 7 MISTAKES QUIETLY KILLING YOUR SEARCH — AND THE FIX FOR EACH",
+        "heroTitle": "Fix The 7 Mistakes Quietly Killing Your Job Search In The AI Era",
+        "heroSubtitle": "A FREE email course that diagnoses one mistake job seekers make in the AI era — then hands you the fix. The old playbook is dead; here's the new one.",
+        "ctaButton": "SEND ME MISTAKE #1 →",
+        "emailPlaceholder": "Enter your email",
+        "createdBy": "Created by David Perry & Laurent Simon",
+        "statsHeadline": "This is the exact system we've used to coach 3,000+ professionals across 35 countries — taking people from \"jobless for 8 months\" to hired in ~30 days.",
+        "stats": [
+          {
+            "value": "3,000+",
+            "label": "Professionals coached"
+          },
+          {
+            "value": "35",
+            "label": "Countries"
+          },
+          {
+            "value": "50+",
+            "label": "Industries"
+          }
+        ],
+        "statsCtaHeadline": "Want free, instant access?",
+        "statsCtaSubhead": "Drop your email here, and we'll send you the first fix ASAP:",
+        "curriculumEyebrow": "WHAT'S INSIDE",
+        "curriculumHeadline": "Here's every mistake we're going to fix (for FREE!) over the next 7 emails:",
+        "curriculum": [
+          {
+            "label": "MISTAKE #1",
+            "title": "Spraying applications into the void",
+            "desc": "No target, no plan, no replies. Why direction beats effort — and how to point the ship first."
+          },
+          {
+            "label": "MISTAKE #2",
+            "title": "Listing duties nobody is buying",
+            "desc": "Nobody hires your responsibilities. They buy the outcome. What hiring managers actually scan for."
+          },
+          {
+            "label": "MISTAKE #3",
+            "title": "A LinkedIn that's a resume, not a magnet",
+            "desc": "Recruiters search, they don't read. Become the Recruiter Magnet they find."
+          },
+          {
+            "label": "MISTAKE #4",
+            "title": "Applying like everyone else",
+            "desc": "You get screened out before a human reads it. Make the algorithm — and the manager — say yes."
+          },
+          {
+            "label": "MISTAKE #5",
+            "title": "Fishing in the crowded 20%",
+            "desc": "Most of the best roles are filled before they're posted. The PIE method opens the side door."
+          },
+          {
+            "label": "MISTAKE #6",
+            "title": "Walking in to be judged",
+            "desc": "An interview isn't a test. The right structure turns it into offers."
+          },
+          {
+            "label": "MISTAKE #7",
+            "title": "Saying yes too fast",
+            "desc": "Say yes on the spot and you can leave $20k–$60k a year on the table. Run the conversation instead."
+          }
+        ],
+        "finalCtaHeadline": "Ready to stop making these mistakes?",
+        "successHeadline": "You're in! 🎉",
+        "successBody": "Check your inbox — the first fix from The AI Job Search Repair Kit is on its way. (Peek in spam/promotions if you don't see it in a minute.)"
+      }
+    }
+  }
+}

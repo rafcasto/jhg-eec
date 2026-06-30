@@ -1,0 +1,246 @@
+/* =============================================================
+   JobHackers.Global — Design Tokens
+   Type + color foundations. Import this first.
+
+   <link rel="stylesheet" href="colors_and_type.css">
+
+   All fonts are loaded LOCALLY from fonts/ via @font-face below —
+   no Google Fonts dependency. Roboto and Poppins ship complete
+   (Thin → Black, normal + italic). Self-contained and offline-safe.
+============================================================= */
+
+/* ---------- Local @font-face (uploaded TTFs) ---------- */
+
+/* Roboto */
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 100; font-display: swap; src: url("/fonts/Roboto-Thin.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: italic; font-weight: 100; font-display: swap; src: url("/fonts/Roboto-ThinItalic.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 300; font-display: swap; src: url("/fonts/Roboto-Light.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: italic; font-weight: 300; font-display: swap; src: url("/fonts/Roboto-LightItalic.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/Roboto-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/Roboto-Italic.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/Roboto-Medium.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: italic; font-weight: 500; font-display: swap; src: url("/fonts/Roboto-MediumItalic.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/Roboto-Bold.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: italic; font-weight: 700; font-display: swap; src: url("/fonts/Roboto-BoldItalic.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 900; font-display: swap; src: url("/fonts/Roboto-Black.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: italic; font-weight: 900; font-display: swap; src: url("/fonts/Roboto-BlackItalic.ttf") format("truetype"); }
+
+/* Roboto 600 (Body weight per brand) — uses Medium TTF.
+   The Google `Roboto` family doesn't ship a true SemiBold; Medium is the closest cut. */
+@font-face { font-family: "Roboto"; font-style: normal; font-weight: 600; font-display: swap; src: url("/fonts/Roboto-Medium.ttf") format("truetype"); }
+@font-face { font-family: "Roboto"; font-style: italic; font-weight: 600; font-display: swap; src: url("/fonts/Roboto-MediumItalic.ttf") format("truetype"); }
+
+/* Poppins */
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 100; font-display: swap; src: url("/fonts/Poppins-Thin.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 100; font-display: swap; src: url("/fonts/Poppins-ThinItalic.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 200; font-display: swap; src: url("/fonts/Poppins-ExtraLight.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 200; font-display: swap; src: url("/fonts/Poppins-ExtraLightItalic.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 300; font-display: swap; src: url("/fonts/Poppins-Light.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 300; font-display: swap; src: url("/fonts/Poppins-LightItalic.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/Poppins-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/Poppins-Italic.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/Poppins-Medium.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 500; font-display: swap; src: url("/fonts/Poppins-MediumItalic.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 600; font-display: swap; src: url("/fonts/Poppins-SemiBold.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 600; font-display: swap; src: url("/fonts/Poppins-SemiBoldItalic.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/Poppins-Bold.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 700; font-display: swap; src: url("/fonts/Poppins-BoldItalic.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 800; font-display: swap; src: url("/fonts/Poppins-ExtraBold.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 800; font-display: swap; src: url("/fonts/Poppins-ExtraBoldItalic.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 900; font-display: swap; src: url("/fonts/Poppins-Black.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 900; font-display: swap; src: url("/fonts/Poppins-BlackItalic.ttf") format("truetype"); }
+
+:root {
+  /* ---------- Brand colors (from Brand Guidelines p.4) ---------- */
+  --jh-red:        #c2001f;   /* primary */
+  --jh-ink:        #191c27;   /* primary text / dark */
+  --jh-red-soft:   #f6e0e3;   /* primary red @ 20% transparency, baked */
+  --jh-blue-grey:  #e2ebfb;   /* secondary surface tint */
+
+  /* ---------- Rainbow signposting (7 topic colors, p.13) ---------- */
+  --rb-red:         #c2001f;
+  --rb-orange:      #f08a1c;
+  --rb-yellow:      #f5d000;
+  --rb-green-light: #6bbf6b;
+  --rb-green-dark:  #2f7a3a;
+  --rb-blue:        #0033cc;
+  --rb-violet:      #7a1ec2;
+
+  /* ---------- Neutrals (derived; not in the guidelines but needed) ---------- */
+  --jh-white:    #ffffff;
+  --jh-paper:    #fafafa;     /* page background */
+  --jh-mist:     #f3f5fa;     /* card background tint */
+  --jh-line:     #e6e8ef;     /* dividers / 1px borders */
+  --jh-line-2:   #d4d8e2;     /* stronger border */
+  --jh-mute-1:   #6b7280;     /* secondary text */
+  --jh-mute-2:   #9aa0ad;     /* tertiary text */
+
+  /* ---------- Semantic foreground ---------- */
+  --fg-1: var(--jh-ink);        /* headings & primary body */
+  --fg-2: #3a3f4d;              /* default body */
+  --fg-3: var(--jh-mute-1);     /* secondary */
+  --fg-4: var(--jh-mute-2);     /* tertiary / captions */
+  --fg-accent: var(--jh-red);   /* CTAs, links, hover */
+  --fg-on-dark: var(--jh-white);
+
+  /* ---------- Semantic background ---------- */
+  --bg-page: var(--jh-white);
+  --bg-soft: var(--jh-paper);
+  --bg-card: var(--jh-white);
+  --bg-tint: var(--jh-blue-grey);
+  --bg-tint-red: var(--jh-red-soft);
+  --bg-dark: var(--jh-ink);
+
+  /* ---------- Type families ---------- */
+  --font-display: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  --font-body:    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:    ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+
+  /* ---------- Type scale (per brand guidelines p.4) ---------- */
+  --h1-size: 48px; --h1-weight: 700; --h1-lh: 1.1;
+  --h2-size: 36px; --h2-weight: 600; --h2-lh: 1.15;
+  --h3-size: 30px; --h3-weight: 600; --h3-lh: 1.2;
+  --h4-size: 18px; --h4-weight: 600; --h4-lh: 1.3;
+  --body-size: 16px; --body-weight: 600; --body-lh: 1.5;
+  --body-reg-weight: 400;
+  --link-size: 14px; --link-weight: 400;
+  --testimonial-size: 18px; --testimonial-weight: 400;
+  --caption-size: 13px;
+
+  /* ---------- Spacing scale ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* ---------- Radii (soft, friendly) ---------- */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-1: 0 1px 2px rgba(25,28,39,.06);
+  --shadow-2: 0 4px 12px rgba(25,28,39,.08);
+  --shadow-3: 0 10px 24px rgba(25,28,39,.10);
+  --shadow-cta: 0 6px 18px rgba(194, 0, 31, .25);
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(.2,.7,.2,1);
+  --ease-in-out: cubic-bezier(.5,.0,.2,1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+}
+
+/* =============================================================
+   Element defaults
+============================================================= */
+html {
+  font-family: var(--font-body);
+  color: var(--fg-2);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body { margin: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--fg-1);
+  margin: 0;
+  text-wrap: pretty;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: var(--h1-size); font-weight: var(--h1-weight); line-height: var(--h1-lh); letter-spacing: -0.02em; }
+h2 { font-size: var(--h2-size); font-weight: var(--h2-weight); line-height: var(--h2-lh); letter-spacing: -0.015em; }
+h3 { font-size: var(--h3-size); font-weight: var(--h3-weight); line-height: var(--h3-lh); }
+h4 { font-size: var(--h4-size); font-weight: var(--h4-weight); line-height: var(--h4-lh); }
+
+p, li {
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  font-weight: var(--body-reg-weight);
+  line-height: var(--body-lh);
+  color: var(--fg-2);
+}
+/* Body emphasised version is weight 600 per guidelines */
+.body-bold, p strong, li strong { font-weight: 600; color: var(--fg-1); }
+
+/* Italics used for secondary info per tone-of-voice */
+.subtle, p em, li em, em.secondary {
+  font-style: italic;
+  color: var(--fg-3);
+  font-weight: 400;
+}
+
+/* Highlight — used to emphasise keywords (red, soft fill) */
+.highlight, mark {
+  background: var(--jh-red-soft);
+  color: var(--jh-red);
+  padding: 0 .25em;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+}
+
+a, .link {
+  font-family: var(--font-body);
+  font-size: var(--link-size);
+  font-weight: var(--link-weight);
+  color: var(--jh-red);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  transition: color var(--dur-2) var(--ease-out);
+}
+a:hover { color: #8a0016; }
+
+small, .caption {
+  font-size: var(--caption-size);
+  color: var(--fg-3);
+}
+
+/* Testimonials use Poppins for the quote, Roboto for attribution */
+.quote {
+  font-family: var(--font-display);
+  font-size: var(--testimonial-size);
+  font-weight: 600;
+  color: var(--fg-1);
+  line-height: 1.4;
+}
+.quote-attr {
+  font-family: var(--font-body);
+  font-size: var(--testimonial-size);
+  font-weight: 400;
+  color: var(--fg-3);
+}
+
+/* Eyebrow / pretitle, often paired with a topic dot */
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--jh-red);
+}
+
+/* =============================================================
+   Utility helpers
+============================================================= */
+.surface-card {
+  background: var(--bg-card);
+  border: 1px solid var(--jh-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+}
+.surface-tint  { background: var(--bg-tint); }
+.surface-dark  { background: var(--bg-dark); color: var(--fg-on-dark); }

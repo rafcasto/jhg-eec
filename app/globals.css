@@ -1,0 +1,311 @@
+/* Page styles for the EEC landing page + admin.
+   Design tokens come from /brand/colors_and_type.css (linked in layout).
+   On-brand palette only: white surfaces, red #c2001f accents, ink #191c27
+   dark section, blue-grey #e2ebfb secondary surface. (Rainbow colors are
+   reserved for topic signposting, never as section backgrounds.) */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--jh-paper); }
+
+:root {
+  --eec-hero-bg: #f7f9fe;   /* faint blue-grey wash */
+  --eec-tint: #e7eefc;      /* blue-grey band (brand secondary) */
+  --eec-card: #ffffff;
+  --eec-frame: var(--jh-red);
+}
+
+.eec-page { font-family: var(--font-body); color: var(--fg-1); }
+
+/* ---------------- Shared form ---------------- */
+.signup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 460px;
+  margin: 0 auto;
+  width: 100%;
+}
+.signup input[type="email"] {
+  font-family: var(--font-body);
+  font-size: 16px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--jh-line-2);
+  border-radius: 10px;
+  background: #fff;
+  outline: none;
+  width: 100%;
+}
+.signup input[type="email"]:focus {
+  border-color: var(--jh-red);
+  box-shadow: 0 0 0 4px rgba(194, 0, 31, 0.12);
+}
+.signup .btn-cta {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--jh-red);
+  border: 0;
+  border-radius: 10px;
+  padding: 15px 22px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(194, 0, 31, 0.25);
+  transition: all 200ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.signup .btn-cta:hover:not(:disabled) {
+  background: #8a0016;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(194, 0, 31, 0.32);
+}
+.signup .btn-cta:disabled { opacity: 0.6; cursor: progress; }
+.signup .form-msg { font-size: 13px; margin: 2px 0 0; text-align: center; }
+.signup .form-msg.error { color: var(--jh-red); }
+.signup .success {
+  background: #fff;
+  border: 1.5px solid var(--jh-line);
+  border-radius: 14px;
+  padding: 22px;
+  text-align: center;
+  box-shadow: var(--shadow-2);
+}
+.signup .success h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin: 0 0 8px;
+}
+.signup .success p { font-size: 14px; color: var(--fg-2); margin: 0; }
+
+/* ---------------- Hero ---------------- */
+.eec-hero {
+  background: var(--eec-hero-bg);
+  border-top: 5px solid var(--eec-frame);
+  padding: 64px 24px 52px;
+  text-align: center;
+}
+.eec-hero__inner { max-width: 640px; margin: 0 auto; }
+.eec-hero h1 {
+  font-family: var(--font-display);
+  font-size: 42px;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--jh-ink);
+  margin: 0 0 28px;
+  text-wrap: balance;
+}
+.eec-hero__sub {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--fg-2);
+  max-width: 520px;
+  margin: 22px auto 24px;
+}
+.eec-hero__created {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--fg-3);
+}
+
+/* Book cover (composed, no external mockup needed) */
+.book {
+  width: 200px;
+  margin: 0 auto 8px;
+  aspect-ratio: 3 / 4.1;
+  border-radius: 6px 10px 10px 6px;
+  background:
+    repeating-linear-gradient(90deg, rgba(25,28,39,0.02) 0 14px, rgba(0,0,0,0) 14px 28px),
+    linear-gradient(180deg, #ffffff, #eef2fa);
+  border: 1px solid var(--jh-line-2);
+  border-left: 7px solid var(--jh-red);
+  box-shadow: 0 18px 38px rgba(25, 28, 39, 0.18);
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+.book__hand { width: 42px; height: auto; opacity: 0.95; }
+.book__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.15;
+  color: var(--jh-ink);
+  letter-spacing: -0.01em;
+}
+.book__sub {
+  font-family: var(--font-body);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  color: var(--fg-3);
+  text-transform: uppercase;
+}
+.book__brand {
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--jh-red);
+}
+
+/* ---------------- Stats band (blue-grey, on-brand) ---------------- */
+.eec-stats {
+  background: var(--eec-tint);
+  padding: 64px 24px;
+  text-align: center;
+}
+.eec-stats__inner { max-width: 760px; margin: 0 auto; }
+.eec-stats__headline {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--jh-ink);
+  margin: 0 auto 36px;
+  max-width: 640px;
+  text-wrap: balance;
+}
+.eec-stats__headline strong { color: var(--jh-red); }
+.eec-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+.stat-card {
+  background: var(--eec-card);
+  border: 1px solid var(--jh-line);
+  border-radius: 14px;
+  padding: 26px 14px;
+  box-shadow: var(--shadow-1);
+}
+.stat-card__value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--jh-red);
+  line-height: 1;
+}
+.stat-card__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg-3);
+  margin-top: 8px;
+  line-height: 1.3;
+}
+.eec-stats__cta-head {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--jh-ink);
+  margin: 0 0 6px;
+}
+.eec-stats__cta-sub { font-size: 14px; color: var(--fg-3); margin: 0 0 20px; }
+
+/* ---------------- Curriculum band (dark ink) ---------------- */
+.eec-curric {
+  background: var(--jh-ink);
+  color: #fff;
+  padding: 72px 24px;
+}
+.eec-curric__inner { max-width: 640px; margin: 0 auto; }
+.eec-curric__eyebrow {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ff5566; /* lightened brand red for AA contrast on ink */
+  text-align: center;
+  margin-bottom: 14px;
+}
+.eec-curric__headline {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  color: #fff;
+  margin: 0 0 44px;
+  text-wrap: balance;
+}
+.curric-item {
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.curric-item:first-child { border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.curric-item__label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ff5566;
+  margin-bottom: 6px;
+}
+.curric-item__title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 6px;
+}
+.curric-item__desc {
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.62);
+  margin: 0;
+}
+
+/* ---------------- Final CTA (white) ---------------- */
+.eec-final {
+  background: #ffffff;
+  padding: 64px 24px;
+  text-align: center;
+  border-top: 1px solid var(--jh-line);
+}
+.eec-final h2 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--jh-ink);
+  margin: 0 0 26px;
+}
+
+/* ---------------- Footer ---------------- */
+.eec-footer {
+  background: var(--jh-ink);
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  padding: 26px 24px;
+  font-size: 12px;
+}
+.eec-footer img { height: 22px; filter: brightness(0) invert(1); opacity: 0.85; margin-bottom: 10px; display: inline-block; }
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 560px) {
+  .eec-hero h1 { font-size: 30px; }
+  .eec-stats__grid { grid-template-columns: 1fr; }
+  .eec-stats__headline { font-size: 20px; }
+  .eec-curric__headline { font-size: 24px; }
+}
+
+/* A tiny variant badge shown only when ?debug=1 */
+.variant-badge {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  z-index: 80;
+  background: var(--jh-ink);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  opacity: 0.85;
+}
