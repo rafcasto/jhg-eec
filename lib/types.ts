@@ -20,6 +20,8 @@ export interface VariantContent {
   /** Book cover image shown in the authors section (path under /public). */
   bookImage: string;
   bookImageAlt: string;
+  /** Product-name eyebrow above the hero headline (e.g. the funnel name). */
+  heroEyebrow: string;
   heroTitle: string;
   heroSubtitle: string;
   ctaButton: string;

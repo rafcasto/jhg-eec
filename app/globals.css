@@ -377,3 +377,21 @@ html, body { margin: 0; padding: 0; background: var(--jh-paper); }
   border-radius: 8px;
   opacity: 0.85;
 }
+
+/* Hero product eyebrow (funnel name) */
+.eec-hero__eyebrow {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--jh-red);
+  background: var(--jh-red-soft);
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+@media (max-width: 560px) {
+  .eec-hero__eyebrow { font-size: 11px; letter-spacing: 0.08em; }
+}

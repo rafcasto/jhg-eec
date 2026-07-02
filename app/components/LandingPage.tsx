@@ -37,6 +37,9 @@ export default function LandingPage({
       {/* ============ PART 1 — HERO ============ */}
       <section className="eec-hero">
         <div className="eec-hero__inner">
+          {c.heroEyebrow && (
+            <div className="eec-hero__eyebrow">{c.heroEyebrow}</div>
+          )}
           <h1>{c.heroTitle}</h1>
           <p className="eec-hero__sub">{c.heroSubtitle}</p>
 

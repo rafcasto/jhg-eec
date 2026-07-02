@@ -260,6 +260,7 @@ export default function AdminDashboard({
 
           {/* Part 1 — Hero */}
           <Group title="Part 1 — Hero">
+            <TextField label="Product eyebrow (funnel name)" value={v.content.heroEyebrow} onChange={(x) => setContent(active, "heroEyebrow", x)} long />
             <TextField label="Hero headline" value={v.content.heroTitle} onChange={(x) => setContent(active, "heroTitle", x)} long />
             <TextField label="Hero subtitle" value={v.content.heroSubtitle} onChange={(x) => setContent(active, "heroSubtitle", x)} long />
             <div className="adm-row2">
