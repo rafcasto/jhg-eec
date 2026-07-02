@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-03T00:00:00.000Z",
+  "updatedAt": "2026-07-02T20:00:52.163Z",
   "variants": {
     "A": {
       "key": "A",
@@ -12,7 +12,7 @@
       "content": {
         "bookTitle": "THE JOB HACKER KICKSTARTER",
         "bookSubtitle": "7 STEPS TO LAND A JOB YOU LOVE, AT THE SALARY YOU DESERVE, IN THE AI ERA",
-        "bookImage": "/assets/book-cover.svg",
+        "bookImage": "/assets/book-cover.png",
         "bookImageAlt": "Job Hacking — How AI is revolutionizing your JobSearch",
         "heroTitle": "How To Land A Job You Love, At The Salary You Deserve, In The AI Era",
         "heroSubtitle": "A FREE 7-lesson email course that hands you the modern job-search playbook — even if the old one stopped working for you.",
@@ -99,7 +99,7 @@
       "content": {
         "bookTitle": "THE AI JOB SEARCH REPAIR KIT",
         "bookSubtitle": "THE 7 MISTAKES QUIETLY KILLING YOUR SEARCH — AND THE FIX FOR EACH",
-        "bookImage": "/assets/book-cover.svg",
+        "bookImage": "/assets/book-cover.png",
         "bookImageAlt": "Job Hacking — How AI is revolutionizing your JobSearch",
         "heroTitle": "Fix The 7 Mistakes Quietly Killing Your Job Search In The AI Era",
         "heroSubtitle": "A FREE email course that diagnoses one mistake job seekers make in the AI era — then hands you the fix. The old playbook is dead; here's the new one.",

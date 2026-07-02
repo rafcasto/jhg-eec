@@ -1,5 +1,6 @@
 import type { Variant } from "@/lib/types";
 import SignupForm from "./SignupForm";
+import BookCover from "./BookCover";
 
 function Check() {
   return (
@@ -74,7 +75,7 @@ export default function LandingPage({
 
           <div className="eec-authors__book">
             <div className="book-frame">
-              <img src={c.bookImage} alt={c.bookImageAlt} />
+              <BookCover src={c.bookImage} alt={c.bookImageAlt} />
             </div>
             <p className="eec-authors__created">{c.createdBy}</p>
           </div>
