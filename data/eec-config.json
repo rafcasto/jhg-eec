@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-01T00:00:00.000Z",
+  "updatedAt": "2026-07-02T20:00:52.163Z",
   "variants": {
     "A": {
       "key": "A",
@@ -12,11 +12,20 @@
       "content": {
         "bookTitle": "THE JOB HACKER KICKSTARTER",
         "bookSubtitle": "7 STEPS TO LAND A JOB YOU LOVE, AT THE SALARY YOU DESERVE, IN THE AI ERA",
+        "bookImage": "/assets/book-cover.png",
+        "bookImageAlt": "Job Hacking — How AI is revolutionizing your JobSearch",
         "heroTitle": "How To Land A Job You Love, At The Salary You Deserve, In The AI Era",
         "heroSubtitle": "A FREE 7-lesson email course that hands you the modern job-search playbook — even if the old one stopped working for you.",
         "ctaButton": "SEND ME LESSON 1 →",
         "emailPlaceholder": "Enter your email",
         "createdBy": "Created by David Perry & Laurent Simon",
+        "heroSocialProof": "Helped 3,000+ professionals across 35 countries land a job they love ❤️",
+        "authorsHeadline": "Created by David Perry & Laurent Simon, who've…",
+        "authorsBullets": [
+          "Coached 3,000+ professionals across 35 countries and 50+ industries to land jobs they love.",
+          "Turned the modern, AI-era job-search playbook into simple, repeatable steps anyone can follow.",
+          "Helped people go from stuck for months to hired in 3–8 weeks — not the ~25-week average."
+        ],
         "statsHeadline": "This is the exact system we've used to coach 3,000+ professionals across 35 countries to land jobs they love — in 3–8 weeks instead of the ~25-week average.",
         "stats": [
           {
@@ -35,7 +44,8 @@
         "statsCtaHeadline": "Want free, instant access?",
         "statsCtaSubhead": "Drop your email here, and we'll send you the first lesson ASAP:",
         "curriculumEyebrow": "WHAT'S INSIDE",
-        "curriculumHeadline": "Here's everything we're going to cover (for FREE!) over the next 7 lessons:",
+        "curriculumHeadline": "Ready to land a job you love?",
+        "curriculumIntro": "Here's a sneak peek of everything you'll learn (for FREE!) over the next 7 lessons:",
         "curriculum": [
           {
             "label": "DAY 1",
@@ -89,11 +99,20 @@
       "content": {
         "bookTitle": "THE AI JOB SEARCH REPAIR KIT",
         "bookSubtitle": "THE 7 MISTAKES QUIETLY KILLING YOUR SEARCH — AND THE FIX FOR EACH",
+        "bookImage": "/assets/book-cover.png",
+        "bookImageAlt": "Job Hacking — How AI is revolutionizing your JobSearch",
         "heroTitle": "Fix The 7 Mistakes Quietly Killing Your Job Search In The AI Era",
         "heroSubtitle": "A FREE email course that diagnoses one mistake job seekers make in the AI era — then hands you the fix. The old playbook is dead; here's the new one.",
         "ctaButton": "SEND ME MISTAKE #1 →",
         "emailPlaceholder": "Enter your email",
         "createdBy": "Created by David Perry & Laurent Simon",
+        "heroSocialProof": "Helped 3,000+ professionals across 35 countries land a job they love ❤️",
+        "authorsHeadline": "Created by David Perry & Laurent Simon, who've…",
+        "authorsBullets": [
+          "Coached 3,000+ professionals across 35 countries and 50+ industries — many hired in ~30 days.",
+          "Diagnosed the exact mistakes quietly killing job searches in the AI era — and the fix for each.",
+          "Replaced the dead old playbook with a modern one that actually gets callbacks."
+        ],
         "statsHeadline": "This is the exact system we've used to coach 3,000+ professionals across 35 countries — taking people from \"jobless for 8 months\" to hired in ~30 days.",
         "stats": [
           {
@@ -112,7 +131,8 @@
         "statsCtaHeadline": "Want free, instant access?",
         "statsCtaSubhead": "Drop your email here, and we'll send you the first fix ASAP:",
         "curriculumEyebrow": "WHAT'S INSIDE",
-        "curriculumHeadline": "Here's every mistake we're going to fix (for FREE!) over the next 7 emails:",
+        "curriculumHeadline": "Ready to stop making these mistakes?",
+        "curriculumIntro": "Here's a sneak peek of every mistake we'll fix (for FREE!) over the next 7 emails:",
         "curriculum": [
           {
             "label": "MISTAKE #1",

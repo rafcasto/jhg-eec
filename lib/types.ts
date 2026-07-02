@@ -17,11 +17,20 @@ export interface VariantContent {
   // Hero
   bookTitle: string;
   bookSubtitle: string;
+  /** Book cover image shown in the authors section (path under /public). */
+  bookImage: string;
+  bookImageAlt: string;
   heroTitle: string;
   heroSubtitle: string;
   ctaButton: string;
   emailPlaceholder: string;
   createdBy: string;
+  /** Social-proof line under the hero form. */
+  heroSocialProof: string;
+
+  // Authors section (part 2)
+  authorsHeadline: string;
+  authorsBullets: string[];
 
   // Stats band
   statsHeadline: string;
@@ -29,9 +38,11 @@ export interface VariantContent {
   statsCtaHeadline: string;
   statsCtaSubhead: string;
 
-  // Curriculum (dark) section
+  // Curriculum (checklist) section
   curriculumEyebrow: string;
   curriculumHeadline: string;
+  /** Intro line above the curriculum checklist. */
+  curriculumIntro: string;
   curriculum: CurriculumItem[];
 
   // Final CTA

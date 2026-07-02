@@ -6,8 +6,6 @@ interface Props {
   variant: "A" | "B";
   ctaButton: string;
   emailPlaceholder: string;
-  successHeadline: string;
-  successBody: string;
   /** A unique id so multiple forms on the page don't collide. */
   formId: string;
 }
@@ -16,8 +14,6 @@ export default function SignupForm({
   variant,
   ctaButton,
   emailPlaceholder,
-  successHeadline,
-  successBody,
   formId,
 }: Props) {
   const [email, setEmail] = useState("");
@@ -53,22 +49,15 @@ export default function SignupForm({
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Something went wrong. Please try again.");
       }
+      // Send the new subscriber to the dedicated thank-you page.
       setStatus("done");
+      if (typeof window !== "undefined") {
+        window.location.assign(`/thank-you?v=${variant}`);
+      }
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : "Please try again.");
     }
-  }
-
-  if (status === "done") {
-    return (
-      <div className="signup">
-        <div className="success">
-          <h3>{successHeadline}</h3>
-          <p>{successBody}</p>
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -84,9 +73,14 @@ export default function SignupForm({
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         autoComplete="email"
+        disabled={status === "loading" || status === "done"}
       />
-      <button className="btn-cta" type="submit" disabled={status === "loading"}>
-        {status === "loading" ? "Sending…" : ctaButton}
+      <button
+        className="btn-cta"
+        type="submit"
+        disabled={status === "loading" || status === "done"}
+      >
+        {status === "loading" || status === "done" ? "Sending…" : ctaButton}
       </button>
       {status === "error" && <p className="form-msg error">{error}</p>}
     </form>
