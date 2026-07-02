@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800" role="img" aria-label="The AI Job Search Repair Kit">
+  <defs>
+    <clipPath id="rk"><rect x="0" y="0" width="600" height="800" rx="10"/></clipPath>
+    <style>
+      .d { font-family: "Poppins","Helvetica Neue",Arial,sans-serif; }
+    </style>
+  </defs>
+  <g clip-path="url(#rk)">
+    <rect x="0" y="0" width="600" height="800" fill="#ffffff"/>
+
+    <!-- Hand watermark + brand mark -->
+    <g fill="#c8d6f4" opacity="0.85">
+      <ellipse cx="118" cy="96" rx="52" ry="60"/>
+      <rect x="86" y="46" width="15" height="66" rx="7"/>
+      <rect x="108" y="36" width="15" height="76" rx="7"/>
+      <rect x="130" y="40" width="15" height="72" rx="7"/>
+      <rect x="152" y="54" width="15" height="58" rx="7"/>
+    </g>
+    <text class="d" x="70" y="112" font-size="44" font-weight="800">
+      <tspan fill="#c2001f">Job</tspan><tspan fill="#191c27"> Hacking</tspan>
+    </text>
+    <line x1="70" y1="146" x2="530" y2="146" stroke="#e6e8ef" stroke-width="2"/>
+
+    <!-- Free course pill -->
+    <rect x="222" y="176" width="156" height="34" rx="17" fill="#f6e0e3"/>
+    <text class="d" x="300" y="199" font-size="15" font-weight="700" fill="#c2001f" text-anchor="middle" letter-spacing="1">FREE EMAIL COURSE</text>
+
+    <!-- Product title -->
+    <text class="d" x="300" y="286" font-size="40" font-weight="700" fill="#191c27" text-anchor="middle">The AI Job Search</text>
+    <text class="d" x="300" y="360" font-size="70" font-weight="800" fill="#c2001f" text-anchor="middle" letter-spacing="1">REPAIR KIT</text>
+
+    <!-- Subtitle -->
+    <text class="d" x="300" y="430" font-size="18" font-weight="600" fill="#3a3f4d" text-anchor="middle" letter-spacing="0.5">
+      <tspan x="300" dy="0">THE 7 MISTAKES QUIETLY</tspan>
+      <tspan x="300" dy="28">KILLING YOUR SEARCH —</tspan>
+      <tspan x="300" dy="28">AND THE FIX FOR EACH</tspan>
+    </text>
+
+    <!-- Paint splatter (rainbow) -->
+    <g opacity="0.96">
+      <ellipse cx="120" cy="700" rx="120" ry="86" fill="#0033cc" transform="rotate(-18 120 700)"/>
+      <ellipse cx="250" cy="720" rx="130" ry="92" fill="#0aa1a1" transform="rotate(10 250 720)"/>
+      <ellipse cx="360" cy="700" rx="120" ry="84" fill="#7a1ec2" transform="rotate(-8 360 700)"/>
+      <ellipse cx="470" cy="720" rx="120" ry="86" fill="#c2001f" transform="rotate(16 470 720)"/>
+      <ellipse cx="520" cy="690" rx="96" ry="70" fill="#f08a1c" transform="rotate(-14 520 690)"/>
+      <ellipse cx="300" cy="770" rx="150" ry="70" fill="#2f7a3a" transform="rotate(6 300 770)"/>
+      <ellipse cx="200" cy="660" rx="72" ry="58" fill="#f5d000" transform="rotate(24 200 660)"/>
+      <ellipse cx="420" cy="660" rx="66" ry="52" fill="#6bbf6b" transform="rotate(-22 420 660)"/>
+      <circle cx="70" cy="610" r="16" fill="#0033cc"/>
+      <circle cx="150" cy="588" r="10" fill="#7a1ec2"/>
+      <circle cx="255" cy="600" r="14" fill="#0aa1a1"/>
+      <circle cx="330" cy="586" r="9" fill="#6bbf6b"/>
+      <circle cx="470" cy="590" r="15" fill="#c2001f"/>
+      <circle cx="540" cy="600" r="10" fill="#f08a1c"/>
+      <circle cx="405" cy="600" r="8" fill="#f5d000"/>
+    </g>
+
+    <text class="d" x="70" y="716" font-size="26" font-weight="700" fill="#ffffff">David Perry &amp; Laurent Simon</text>
+  </g>
+</svg>

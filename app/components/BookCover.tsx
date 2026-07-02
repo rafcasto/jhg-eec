@@ -2,20 +2,29 @@
 
 import { useState } from "react";
 
+/** Swap a raster path (.png/.jpg/.webp) to the matching .svg fallback. */
+function deriveFallback(src: string): string {
+  if (/\.(png|jpe?g|webp)$/i.test(src)) {
+    return src.replace(/\.(png|jpe?g|webp)$/i, ".svg");
+  }
+  return "/assets/book-cover.svg";
+}
+
 /**
- * Renders the book cover image. Uses the primary source (the real PNG) and
- * automatically falls back to the SVG recreation if the PNG isn't present yet,
- * so the page never shows a broken image.
+ * Renders the book cover image. If the primary source fails to load (e.g. a
+ * real PNG hasn't been added yet), it automatically falls back to the matching
+ * SVG so the page never shows a broken image.
  */
 export default function BookCover({
   src,
   alt,
-  fallback = "/assets/book-cover.svg",
+  fallback,
 }: {
   src: string;
   alt: string;
   fallback?: string;
 }) {
+  const fb = fallback ?? deriveFallback(src);
   const [current, setCurrent] = useState(src);
 
   return (
@@ -23,7 +32,7 @@ export default function BookCover({
       src={current}
       alt={alt}
       onError={() => {
-        if (current !== fallback) setCurrent(fallback);
+        if (current !== fb) setCurrent(fb);
       }}
     />
   );
