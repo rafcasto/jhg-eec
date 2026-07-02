@@ -1,6 +1,22 @@
 import type { Variant } from "@/lib/types";
 import SignupForm from "./SignupForm";
 
+function Check() {
+  return (
+    <span className="chk" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
+        <path
+          d="M5 12.5l4.2 4.2L19 7"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
+  );
+}
+
 export default function LandingPage({
   variant,
   showBadge,
@@ -13,76 +29,86 @@ export default function LandingPage({
     variant: variant.key,
     ctaButton: c.ctaButton,
     emailPlaceholder: c.emailPlaceholder,
-    successHeadline: c.successHeadline,
-    successBody: c.successBody,
   };
 
   return (
     <main className="eec-page">
-      {/* HERO */}
+      {/* ============ PART 1 — HERO ============ */}
       <section className="eec-hero">
         <div className="eec-hero__inner">
           <h1>{c.heroTitle}</h1>
-
-          <div className="book" aria-hidden="true">
-            <img className="book__hand" src="/assets/logo-hand.png" alt="" />
-            <div className="book__title">{c.bookTitle}</div>
-            <div className="book__sub">{c.bookSubtitle}</div>
-            <div className="book__brand">Job Hackers Global</div>
-          </div>
-
           <p className="eec-hero__sub">{c.heroSubtitle}</p>
 
           <SignupForm {...formProps} formId="hero" />
 
-          <p className="eec-hero__created">{c.createdBy}</p>
+          <p className="eec-hero__proof">{c.heroSocialProof}</p>
         </div>
       </section>
 
-      {/* STATS BAND */}
-      <section className="eec-stats">
-        <div className="eec-stats__inner">
-          <p className="eec-stats__headline">{c.statsHeadline}</p>
+      {/* ============ PART 2 — AUTHORS + BOOK ============ */}
+      <section className="eec-authors">
+        <div className="eec-authors__inner">
+          <div className="eec-authors__copy">
+            <h2>{c.authorsHeadline}</h2>
 
-          <div className="eec-stats__grid">
-            {c.stats.map((s, i) => (
-              <div className="stat-card" key={i}>
-                <div className="stat-card__value">{s.value}</div>
-                <div className="stat-card__label">{s.label}</div>
-              </div>
-            ))}
+            <ul className="eec-authors__list">
+              {c.authorsBullets.map((b, i) => (
+                <li key={i}>
+                  <Check />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="eec-authors__stats">
+              {c.stats.map((s, i) => (
+                <div className="stat-chip" key={i}>
+                  <span className="stat-chip__value">{s.value}</span>
+                  <span className="stat-chip__label">{s.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <SignupForm {...formProps} formId="authors" />
           </div>
 
-          <h2 className="eec-stats__cta-head">{c.statsCtaHeadline}</h2>
-          <p className="eec-stats__cta-sub">{c.statsCtaSubhead}</p>
-          <SignupForm {...formProps} formId="stats" />
+          <div className="eec-authors__book">
+            <div className="book-frame">
+              <img src={c.bookImage} alt={c.bookImageAlt} />
+            </div>
+            <p className="eec-authors__created">{c.createdBy}</p>
+          </div>
         </div>
       </section>
 
-      {/* CURRICULUM (dark) */}
+      {/* ============ PART 3 — CURRICULUM CHECKLIST ============ */}
       <section className="eec-curric">
         <div className="eec-curric__inner">
           <div className="eec-curric__eyebrow">{c.curriculumEyebrow}</div>
           <h2 className="eec-curric__headline">{c.curriculumHeadline}</h2>
-          <div>
+          <p className="eec-curric__intro">{c.curriculumIntro}</p>
+
+          <ul className="eec-curric__list">
             {c.curriculum.map((item, i) => (
-              <div className="curric-item" key={i}>
-                <div className="curric-item__label">{item.label}</div>
-                <h3 className="curric-item__title">{item.title}</h3>
-                <p className="curric-item__desc">{item.desc}</p>
-              </div>
+              <li className="curric-item" key={i}>
+                <Check />
+                <span className="curric-item__text">
+                  <b className="curric-item__label">{item.label}.</b>{" "}
+                  <b className="curric-item__title">{item.title}</b>
+                  <span className="curric-item__desc"> — {item.desc}</span>
+                </span>
+              </li>
             ))}
+          </ul>
+
+          <h3 className="eec-curric__cta-head">{c.finalCtaHeadline}</h3>
+          <div className="eec-curric__form">
+            <SignupForm {...formProps} formId="final" />
           </div>
         </div>
       </section>
 
-      {/* FINAL CTA */}
-      <section className="eec-final">
-        <h2>{c.finalCtaHeadline}</h2>
-        <SignupForm {...formProps} formId="final" />
-      </section>
-
-      {/* FOOTER */}
+      {/* ============ FOOTER ============ */}
       <footer className="eec-footer">
         <div>
           <img src="/assets/logo-jobhackers.png" alt="Job Hackers Global" />

@@ -258,24 +258,38 @@ export default function AdminDashboard({
             </p>
           </Group>
 
-          {/* Hero */}
-          <Group title="Hero">
+          {/* Part 1 — Hero */}
+          <Group title="Part 1 — Hero">
             <TextField label="Hero headline" value={v.content.heroTitle} onChange={(x) => setContent(active, "heroTitle", x)} long />
             <TextField label="Hero subtitle" value={v.content.heroSubtitle} onChange={(x) => setContent(active, "heroSubtitle", x)} long />
             <div className="adm-row2">
-              <TextField label="Book title (cover)" value={v.content.bookTitle} onChange={(x) => setContent(active, "bookTitle", x)} />
               <TextField label="CTA button" value={v.content.ctaButton} onChange={(x) => setContent(active, "ctaButton", x)} />
-            </div>
-            <TextField label="Book subtitle (cover)" value={v.content.bookSubtitle} onChange={(x) => setContent(active, "bookSubtitle", x)} />
-            <div className="adm-row2">
               <TextField label="Email placeholder" value={v.content.emailPlaceholder} onChange={(x) => setContent(active, "emailPlaceholder", x)} />
-              <TextField label="Created-by line" value={v.content.createdBy} onChange={(x) => setContent(active, "createdBy", x)} />
             </div>
+            <TextField label="Social-proof line (under form)" value={v.content.heroSocialProof} onChange={(x) => setContent(active, "heroSocialProof", x)} long />
           </Group>
 
-          {/* Stats */}
-          <Group title="Stats band">
-            <TextField label="Stats headline" value={v.content.statsHeadline} onChange={(x) => setContent(active, "statsHeadline", x)} long />
+          {/* Part 2 — Authors + book */}
+          <Group title="Part 2 — Authors &amp; book">
+            <TextField label="Authors headline" value={v.content.authorsHeadline} onChange={(x) => setContent(active, "authorsHeadline", x)} long />
+            {v.content.authorsBullets.map((b, i) => (
+              <TextField
+                key={i}
+                label={`Bullet ${i + 1}`}
+                value={b}
+                long
+                onChange={(x) =>
+                  update((c) => {
+                    c.variants[active].content.authorsBullets[i] = x;
+                  })
+                }
+              />
+            ))}
+            <div className="adm-row2">
+              <TextField label="Book image path" value={v.content.bookImage} onChange={(x) => setContent(active, "bookImage", x)} />
+              <TextField label="Book image alt text" value={v.content.bookImageAlt} onChange={(x) => setContent(active, "bookImageAlt", x)} />
+            </div>
+            <TextField label="Created-by caption" value={v.content.createdBy} onChange={(x) => setContent(active, "createdBy", x)} />
             <div className="adm-stats3">
               {v.content.stats.map((s, i) => (
                 <div className="adm-statbox" key={i}>
@@ -300,18 +314,15 @@ export default function AdminDashboard({
                 </div>
               ))}
             </div>
-            <div className="adm-row2">
-              <TextField label="CTA headline" value={v.content.statsCtaHeadline} onChange={(x) => setContent(active, "statsCtaHeadline", x)} />
-              <TextField label="CTA subhead" value={v.content.statsCtaSubhead} onChange={(x) => setContent(active, "statsCtaSubhead", x)} />
-            </div>
           </Group>
 
-          {/* Curriculum */}
-          <Group title="Curriculum (dark section)">
+          {/* Part 3 — Curriculum checklist */}
+          <Group title="Part 3 — Curriculum checklist">
             <div className="adm-row2">
               <TextField label="Eyebrow" value={v.content.curriculumEyebrow} onChange={(x) => setContent(active, "curriculumEyebrow", x)} />
               <TextField label="Section headline" value={v.content.curriculumHeadline} onChange={(x) => setContent(active, "curriculumHeadline", x)} long />
             </div>
+            <TextField label="Intro line (above checklist)" value={v.content.curriculumIntro} onChange={(x) => setContent(active, "curriculumIntro", x)} long />
             <div className="adm-curlist">
               {v.content.curriculum.map((item, i) => (
                 <CurriculumRow
@@ -348,15 +359,19 @@ export default function AdminDashboard({
                 + Add item
               </button>
             </div>
+            <TextField label="Final CTA headline (above last form)" value={v.content.finalCtaHeadline} onChange={(x) => setContent(active, "finalCtaHeadline", x)} />
           </Group>
 
-          {/* Final / success */}
-          <Group title="Final CTA &amp; success">
-            <TextField label="Final CTA headline" value={v.content.finalCtaHeadline} onChange={(x) => setContent(active, "finalCtaHeadline", x)} />
+          {/* Thank-you page */}
+          <Group title="Thank-you page">
             <div className="adm-row2">
               <TextField label="Success headline" value={v.content.successHeadline} onChange={(x) => setContent(active, "successHeadline", x)} />
               <TextField label="Success body" value={v.content.successBody} onChange={(x) => setContent(active, "successBody", x)} long />
             </div>
+            <p className="adm-hint">
+              Shown on <code>/thank-you</code> after someone subscribes with this
+              version.
+            </p>
           </Group>
         </section>
       </div>

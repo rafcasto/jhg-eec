@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800" role="img" aria-label="Job Hacking — How AI is revolutionizing your JobSearch">
+  <defs>
+    <clipPath id="cover"><rect x="0" y="0" width="600" height="800" rx="10"/></clipPath>
+    <style>
+      .jh-title { font-family: "Poppins","Helvetica Neue",Arial,sans-serif; font-weight: 800; }
+      .jh-sub   { font-family: "Poppins","Helvetica Neue",Arial,sans-serif; font-weight: 700; }
+      .jh-note  { font-family: "Poppins","Helvetica Neue",Arial,sans-serif; font-weight: 500; }
+      .jh-auth  { font-family: "Poppins","Helvetica Neue",Arial,sans-serif; font-weight: 700; }
+    </style>
+  </defs>
+
+  <g clip-path="url(#cover)">
+    <!-- Paper -->
+    <rect x="0" y="0" width="600" height="800" fill="#ffffff"/>
+
+    <!-- Hand watermark (soft blue, behind the title) -->
+    <g fill="#c8d6f4" opacity="0.9">
+      <ellipse cx="150" cy="150" rx="92" ry="112"/>
+      <rect x="86" y="70" width="26" height="120" rx="13"/>
+      <rect x="124" y="52" width="26" height="140" rx="13"/>
+      <rect x="162" y="60" width="26" height="132" rx="13"/>
+      <rect x="200" y="86" width="26" height="108" rx="13"/>
+      <rect x="222" y="140" width="30" height="60" rx="15" transform="rotate(38 237 170)"/>
+    </g>
+
+    <!-- Title -->
+    <text class="jh-title" x="70" y="180" font-size="86">
+      <tspan fill="#c2001f">Job</tspan><tspan fill="#191c27"> Hacking</tspan>
+    </text>
+
+    <!-- Subtitle -->
+    <text class="jh-sub" x="300" y="300" font-size="42" fill="#191c27" text-anchor="middle">
+      <tspan x="300" dy="0">How AI is</tspan>
+      <tspan x="300" dy="52">revolutionizing</tspan>
+      <tspan x="300" dy="52">your JobSearch</tspan>
+    </text>
+
+    <!-- Note -->
+    <text class="jh-note" x="300" y="470" font-size="30" fill="#3a3f4d" text-anchor="middle">
+      <tspan x="300" dy="0">(and how you can</tspan>
+      <tspan x="300" dy="40">benefit from it ;-)</tspan>
+    </text>
+
+    <!-- Paint splatter (rainbow) -->
+    <g opacity="0.96">
+      <!-- large base blobs -->
+      <ellipse cx="120" cy="700" rx="120" ry="86" fill="#c2001f" transform="rotate(-18 120 700)"/>
+      <ellipse cx="250" cy="720" rx="130" ry="92" fill="#f5d000" transform="rotate(10 250 720)"/>
+      <ellipse cx="360" cy="700" rx="120" ry="84" fill="#2f7a3a" transform="rotate(-8 360 700)"/>
+      <ellipse cx="470" cy="720" rx="120" ry="86" fill="#0aa1a1" transform="rotate(16 470 720)"/>
+      <ellipse cx="520" cy="690" rx="96" ry="70" fill="#0033cc" transform="rotate(-14 520 690)"/>
+      <ellipse cx="300" cy="770" rx="150" ry="70" fill="#7a1ec2" transform="rotate(6 300 770)"/>
+      <ellipse cx="200" cy="660" rx="72" ry="58" fill="#f08a1c" transform="rotate(24 200 660)"/>
+      <ellipse cx="420" cy="660" rx="66" ry="52" fill="#6bbf6b" transform="rotate(-22 420 660)"/>
+      <!-- drips / droplets -->
+      <circle cx="70" cy="610" r="16" fill="#c2001f"/>
+      <circle cx="40" cy="660" r="9" fill="#c2001f"/>
+      <circle cx="150" cy="588" r="10" fill="#f08a1c"/>
+      <circle cx="255" cy="600" r="14" fill="#f5d000"/>
+      <circle cx="330" cy="586" r="9" fill="#6bbf6b"/>
+      <circle cx="470" cy="590" r="15" fill="#0aa1a1"/>
+      <circle cx="540" cy="600" r="10" fill="#0033cc"/>
+      <circle cx="560" cy="640" r="7" fill="#7a1ec2"/>
+      <circle cx="405" cy="600" r="8" fill="#2f7a3a"/>
+      <rect x="300" y="560" width="10" height="40" rx="5" fill="#f5d000" transform="rotate(12 305 580)"/>
+      <rect x="118" y="574" width="9" height="34" rx="4" fill="#c2001f" transform="rotate(-10 122 590)"/>
+      <rect x="486" y="566" width="9" height="34" rx="4" fill="#0033cc" transform="rotate(14 490 582)"/>
+    </g>
+
+    <!-- Authors -->
+    <text class="jh-auth" x="70" y="716" font-size="28" fill="#ffffff">David Perry &amp; Laurent Simon</text>
+  </g>
+</svg>
