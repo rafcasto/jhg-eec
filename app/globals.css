@@ -177,9 +177,9 @@ html, body { margin: 0; padding: 0; background: var(--jh-paper); }
 
 .eec-authors__book { text-align: center; }
 .book-frame {
-  background: var(--eec-frame);
+  background: transparent;
   border-radius: 18px;
-  padding: 30px;
+  padding: 0;
   display: inline-block;
   max-width: 340px;
   width: 100%;
