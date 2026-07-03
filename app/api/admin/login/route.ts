@@ -29,11 +29,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Only mark the cookie Secure on real HTTPS. Marking it Secure while the
+  // admin is served over plain http (a non-localhost host) makes the browser
+  // silently drop the cookie, so the user "logs in" but is bounced back to the
+  // login page. Detect the actual protocol (respecting a reverse proxy).
+  const proto =
+    req.headers.get("x-forwarded-proto")?.split(",")[0].trim() ||
+    req.nextUrl.protocol.replace(":", "");
+  const isHttps = proto === "https";
+
   const res = NextResponse.json({ ok: true });
   res.cookies.set(ADMIN_COOKIE, makeToken(username), {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: isHttps,
     path: "/",
     maxAge: 60 * 60 * 12, // 12h session
   });

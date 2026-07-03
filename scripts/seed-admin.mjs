@@ -8,12 +8,12 @@
  *   --password, -p   password     (or env SEED_ADMIN_PASSWORD)
  *
  * Actions:
- *   npm run seed:admin -- --username alice --password 's3cret'   add/update user
- *   npm run seed:admin -- --list                                 list usernames
- *   npm run seed:admin -- --remove alice                         remove a user
- *   npm run seed:admin -- --username alice --password x --print   print the
- *                        ADMIN_USERS env value (for serverless/Vercel) instead
- *                        of only writing the local data/admin-users.json file.
+ *   npm run seed:admin -- --username alice --password 's3cret'    add/update user
+ *   npm run seed:admin -- --list                                  list usernames
+ *   npm run seed:admin -- --remove alice                          remove a user
+ *   npm run seed:admin -- --verify -u alice -p 's3cret'           test a password
+ *   npm run seed:admin -- -u alice -p x --print                   also print the
+ *                        ADMIN_USERS env value (for serverless/Vercel).
  *
  * Users are stored (scrypt-hashed) in data/admin-users.json, which is
  * gitignored so hashes never land in the repo. For serverless hosts where the
@@ -30,6 +30,7 @@ const USERS_FILE = path.join(ROOT, "data", "admin-users.json");
 
 const KEYLEN = 64;
 const SCRYPT_PARAMS = { N: 16384, r: 8, p: 1 };
+const SEP = "$";
 
 // ---------- tiny .env loader (no dependency) ----------
 function loadEnv(file) {
@@ -70,6 +71,9 @@ function parseArgs(argv) {
       case "--list":
         out.list = true;
         break;
+      case "--verify":
+        out.verify = true;
+        break;
       case "--print":
       case "--env":
         out.print = true;
@@ -88,7 +92,17 @@ function parseArgs(argv) {
 function hashPassword(password) {
   const salt = crypto.randomBytes(16);
   const key = crypto.scryptSync(password, salt, KEYLEN, SCRYPT_PARAMS);
-  return `scrypt$${salt.toString("hex")}$${key.toString("hex")}`;
+  return ["scrypt", salt.toString("hex"), key.toString("hex")].join(SEP);
+}
+
+function verifyHash(password, stored) {
+  const parts = String(stored || "").split(SEP);
+  if (parts.length !== 3 || parts[0] !== "scrypt") return false;
+  const salt = Buffer.from(parts[1], "hex");
+  const expected = Buffer.from(parts[2], "hex");
+  if (expected.length === 0) return false;
+  const key = crypto.scryptSync(password, salt, expected.length, SCRYPT_PARAMS);
+  return key.length === expected.length && crypto.timingSafeEqual(key, expected);
 }
 
 function readUsers() {
@@ -116,7 +130,8 @@ function usage() {
   npm run seed:admin -- --username <name> --password <pass>   add or update a user
   npm run seed:admin -- --list                                list usernames
   npm run seed:admin -- --remove <name>                       remove a user
-  add --print to any add command to also output the ADMIN_USERS env value
+  npm run seed:admin -- --verify -u <name> -p <pass>          test a password
+  add --print to an add command to also output the ADMIN_USERS env value
 
 Credentials may also come from SEED_ADMIN_USERNAME / SEED_ADMIN_PASSWORD
 (in .env.local or the shell environment).`);
@@ -155,6 +170,28 @@ if (args.remove) {
   process.exit(0);
 }
 
+if (args.verify) {
+  const u = (args.username || process.env.SEED_ADMIN_USERNAME || "").trim();
+  const pw = args.password || process.env.SEED_ADMIN_PASSWORD || "";
+  if (!u || !pw) {
+    console.error("Error: --verify needs --username and --password.");
+    process.exit(1);
+  }
+  const match = readUsers().find(
+    (x) => x.username.toLowerCase() === u.toLowerCase()
+  );
+  if (!match) {
+    console.error(`No user "${u}" in data/admin-users.json.`);
+    process.exit(1);
+  }
+  if (verifyHash(pw, match.hash)) {
+    console.log(`OK — password matches for "${u}".`);
+    process.exit(0);
+  }
+  console.error(`FAIL — password does not match for "${u}".`);
+  process.exit(1);
+}
+
 const username = (args.username || process.env.SEED_ADMIN_USERNAME || "").trim();
 const password = args.password || process.env.SEED_ADMIN_PASSWORD || "";
 
@@ -184,8 +221,6 @@ writeUsers(users);
 console.log(`Saved ${users.length} user(s) to data/admin-users.json`);
 
 if (args.print) {
-  console.log(
-    "\nFor serverless hosts, set this environment variable instead:\n"
-  );
+  console.log("\nFor serverless hosts, set this environment variable instead:\n");
   console.log(`ADMIN_USERS=${envValue(users)}`);
 }
