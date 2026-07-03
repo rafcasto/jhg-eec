@@ -100,16 +100,25 @@ set `ADMIN_USERS`, and set a long random `ADMIN_SESSION_SECRET`.
 
 ## Admin users
 
-The `/admin` panel authenticates with a **username + password**. Passwords are
-scrypt-hashed; the session is an HMAC-signed cookie carrying the username.
+The `/admin` panel authenticates with a **username (email) + password**.
+Credentials are stored in **Supabase** on the existing `public.admins` table
+(email = username) in a `password_hash` column — run the
+`supabase/migrations/0002_admins_password.sql` migration once (Supabase SQL
+editor or `supabase db push`). Passwords are scrypt-hashed; the session is an
+HMAC-signed cookie carrying the username.
 
-**Add or update a user** (writes `data/admin-users.json`, which is gitignored):
+**Add or update a user** (upserts into `public.admins`):
 
 ```bash
-npm run seed:admin -- --username alice --password 'a-strong-password'
-npm run seed:admin -- --list                 # list usernames
-npm run seed:admin -- --remove alice         # remove a user
+npm run seed:admin -- --username you@example.com --password 'a-strong-password'
+npm run seed:admin -- --list                       # list admins
+npm run seed:admin -- --remove you@example.com     # revoke login
+npm run seed:admin -- --verify -u you@example.com -p 'a-strong-password'
+npm run seed:admin -- --migrate-file               # import data/admin-users.json
 ```
+
+The seed script needs `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (read from
+`.env.local`).
 
 You can also supply credentials via `SEED_ADMIN_USERNAME` / `SEED_ADMIN_PASSWORD`
 in `.env.local` instead of CLI flags.

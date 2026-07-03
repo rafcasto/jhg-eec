@@ -3,19 +3,18 @@ import fs from "fs";
 import path from "path";
 
 /**
- * Admin user store for the /admin panel.
+ * Admin credentials for the /admin panel.
  *
- * Users can come from two places (merged, file takes precedence over env):
- *   1. ADMIN_USERS env var  — best for serverless (Vercel). Format is a
- *      comma/newline separated list of `username:hash` pairs, or a JSON array
- *      of { "username", "hash" }.
- *   2. data/admin-users.json — best for a local/single Node server. Written by
- *      `npm run seed:admin`. Gitignored so password hashes never hit the repo.
+ * Primary store: Supabase — the existing `public.admins` table, keyed by
+ * `email` (used as the username), with a `password_hash` column added by the
+ * 0002 migration. Users are managed with `npm run seed:admin`.
  *
- * Passwords are stored as scrypt hashes: `scrypt$<saltHex>$<keyHex>`.
- * A legacy single ADMIN_PASSWORD (username defaults to ADMIN_USERNAME or
- * "admin") still works when no matching user is configured, so existing
- * deployments keep functioning.
+ * Fallbacks (checked only when Supabase has no credential for the user):
+ *   - ADMIN_USERS env var  — `username:hash` pairs or a JSON array
+ *   - data/admin-users.json — local file (gitignored)
+ *   - legacy single ADMIN_PASSWORD (username = ADMIN_USERNAME or "admin")
+ *
+ * Passwords are scrypt hashes: `scrypt$<saltHex>$<keyHex>`.
  */
 
 export interface AdminUser {
@@ -55,6 +54,39 @@ export function verifyHash(password: string, stored: string): boolean {
   return key.length === expected.length && crypto.timingSafeEqual(key, expected);
 }
 
+// ---------------- Supabase (primary) ----------------
+
+function supabaseBase(): string | null {
+  const url = process.env.SUPABASE_URL;
+  return url ? url.replace(/\/$/, "") : null;
+}
+
+/** Look up an admin's password hash in Supabase (public.admins.email). */
+async function getSupabaseAdminHash(username: string): Promise<string | null> {
+  const base = supabaseBase();
+  const key = process.env.SUPABASE_SECRET_KEY;
+  if (!base || !key) return null;
+
+  const email = username.trim().toLowerCase();
+  const url =
+    `${base}/rest/v1/admins` +
+    `?select=password_hash&email=eq.${encodeURIComponent(email)}&limit=1`;
+  try {
+    const res = await fetch(url, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const rows = (await res.json()) as Array<{ password_hash?: string | null }>;
+    const hash = Array.isArray(rows) && rows[0] ? rows[0].password_hash : null;
+    return hash || null;
+  } catch {
+    return null;
+  }
+}
+
+// ---------------- Env + file (fallback) ----------------
+
 function parseEnvUsers(): AdminUser[] {
   const raw = process.env.ADMIN_USERS?.trim();
   if (!raw) return [];
@@ -74,7 +106,6 @@ function parseEnvUsers(): AdminUser[] {
     }
   }
 
-  // Compact form: "alice:scrypt$..,bob:scrypt$.." (comma or newline separated).
   return raw
     .split(/[\n,]+/)
     .map((s) => s.trim())
@@ -87,13 +118,12 @@ function parseEnvUsers(): AdminUser[] {
     .filter((u) => u.username && u.hash);
 }
 
-function usersFilePath(): string {
-  return path.join(process.cwd(), "data", "admin-users.json");
-}
-
 function parseFileUsers(): AdminUser[] {
   try {
-    const raw = fs.readFileSync(usersFilePath(), "utf8");
+    const raw = fs.readFileSync(
+      path.join(process.cwd(), "data", "admin-users.json"),
+      "utf8"
+    );
     const data = JSON.parse(raw);
     const list = Array.isArray(data) ? data : data.users;
     if (!Array.isArray(list)) return [];
@@ -108,7 +138,7 @@ function parseFileUsers(): AdminUser[] {
   }
 }
 
-/** All configured users (file entries override env entries by username). */
+/** Fallback users (file overrides env by username). */
 export function listUsers(): AdminUser[] {
   const byName = new Map<string, AdminUser>();
   for (const u of parseEnvUsers()) byName.set(u.username.toLowerCase(), u);
@@ -120,17 +150,25 @@ function legacyUsername(): string {
   return (process.env.ADMIN_USERNAME || "admin").trim();
 }
 
-/** Verify a username + password against configured users (constant-time-ish). */
-export function verifyUser(username: string, password: string): boolean {
+/** Verify a username + password. Supabase first, then env/file, then legacy. */
+export async function verifyUser(
+  username: string,
+  password: string
+): Promise<boolean> {
   const u = (username || "").trim();
   if (!u || !password) return false;
 
+  // 1. Supabase (primary)
+  const sbHash = await getSupabaseAdminHash(u);
+  if (sbHash) return verifyHash(password, sbHash);
+
+  // 2. Env / file fallback
   const match = listUsers().find(
     (x) => x.username.toLowerCase() === u.toLowerCase()
   );
   if (match) return verifyHash(password, match.hash);
 
-  // Legacy single-password fallback (only when no explicit user matched).
+  // 3. Legacy single password
   const legacyPw = process.env.ADMIN_PASSWORD || "";
   if (legacyPw && u.toLowerCase() === legacyUsername().toLowerCase()) {
     const a = Buffer.from(password);
@@ -138,9 +176,4 @@ export function verifyUser(username: string, password: string): boolean {
     return a.length === b.length && crypto.timingSafeEqual(a, b);
   }
   return false;
-}
-
-/** True when at least one login credential is configured (users or legacy). */
-export function hasAnyCredential(): boolean {
-  return listUsers().length > 0 || Boolean(process.env.ADMIN_PASSWORD);
 }

@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!verifyUser(username, password)) {
+  if (!(await verifyUser(username, password))) {
     return NextResponse.json(
       { error: "Incorrect username or password." },
       { status: 401 }
