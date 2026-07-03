@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function AdminLogin() {
   const router = useRouter();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ export default function AdminLogin() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username, password }),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -38,11 +39,19 @@ export default function AdminLogin() {
         <h1>EEC Admin</h1>
         <p>Sign in to manage the A/B test and edit content.</p>
         <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          autoComplete="username"
+          autoFocus
+        />
+        <input
           type="password"
-          placeholder="Admin password"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          autoFocus
+          autoComplete="current-password"
         />
         <button type="submit" disabled={loading}>
           {loading ? "Signing in…" : "Sign in"}

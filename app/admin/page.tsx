@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { isAuthed } from "@/lib/adminAuth";
+import { isAuthed, sessionUsername } from "@/lib/adminAuth";
 import { readConfig } from "@/lib/abConfig";
 import AdminDashboard from "./AdminDashboard";
 
@@ -10,5 +10,6 @@ export default async function AdminPage() {
     redirect("/admin/login");
   }
   const config = await readConfig();
-  return <AdminDashboard initialConfig={config} />;
+  const username = sessionUsername() ?? "";
+  return <AdminDashboard initialConfig={config} username={username} />;
 }

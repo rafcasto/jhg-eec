@@ -8,8 +8,10 @@ const KEYS: VariantKey[] = ["A", "B"];
 
 export default function AdminDashboard({
   initialConfig,
+  username,
 }: {
   initialConfig: ABConfig;
+  username?: string;
 }) {
   const router = useRouter();
   const [config, setConfig] = useState<ABConfig>(() =>
@@ -95,6 +97,11 @@ export default function AdminDashboard({
           <span>EEC&nbsp;·&nbsp;A/B Admin</span>
         </div>
         <div className="adm-top__r">
+          {username ? (
+            <span className="adm-user" title="Signed in">
+              {username}
+            </span>
+          ) : null}
           <a className="adm-link" href="/?debug=1" target="_blank" rel="noreferrer">
             View live ↗
           </a>
@@ -516,6 +523,7 @@ function Styles() {
       .adm-top__l img { height: 22px; filter: brightness(0) invert(1); }
       .adm-top__r { display: flex; align-items: center; gap: 14px; }
       .adm-link { color: #fff; font-size: 13px; font-weight: 600; text-decoration: none; }
+      .adm-user { color: #fff; font-size: 13px; font-weight: 700; background: rgba(255,255,255,.14); padding: 5px 11px; border-radius: 999px; }
       .adm-wrap { max-width: 860px; margin: 24px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 20px; }
       .adm-card { background: #fff; border: 1px solid var(--jh-line); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-1); }
       .adm-card h2 { font-family: var(--font-display); font-size: 20px; margin: 0 0 4px; }

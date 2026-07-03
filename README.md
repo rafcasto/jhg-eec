@@ -13,7 +13,8 @@ npm run dev          # http://localhost:3000
 ```
 
 - **Landing page:** `/`
-- **Admin panel:** `/admin` (password from `ADMIN_PASSWORD`, default `jobhackers`)
+- **Admin panel:** `/admin` (sign in with a **username + password**; seed users
+  with `npm run seed:admin` — see [Admin users](#admin-users))
 
 Secrets live in `.env.local` (already filled in for this project). They are read
 **server-side only** — the Resend and Supabase keys are never shipped to the browser.
@@ -91,10 +92,34 @@ supabase/migrations/        leads table DDL (for portability)
 
 See `.env.example`. Server-side only:
 `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `RESEND_API_KEY`, `KIT_API_KEY`,
-`ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`.
+`ADMIN_SESSION_SECRET`, and admin credentials (`ADMIN_USERS` or the legacy
+`ADMIN_USERNAME` / `ADMIN_PASSWORD`).
 
-**Before going live:** change `ADMIN_PASSWORD` and set a long random
-`ADMIN_SESSION_SECRET`.
+**Before going live:** seed at least one admin user (`npm run seed:admin`) or
+set `ADMIN_USERS`, and set a long random `ADMIN_SESSION_SECRET`.
+
+## Admin users
+
+The `/admin` panel authenticates with a **username + password**. Passwords are
+scrypt-hashed; the session is an HMAC-signed cookie carrying the username.
+
+**Add or update a user** (writes `data/admin-users.json`, which is gitignored):
+
+```bash
+npm run seed:admin -- --username alice --password 'a-strong-password'
+npm run seed:admin -- --list                 # list usernames
+npm run seed:admin -- --remove alice         # remove a user
+```
+
+You can also supply credentials via `SEED_ADMIN_USERNAME` / `SEED_ADMIN_PASSWORD`
+in `.env.local` instead of CLI flags.
+
+**Serverless (Vercel):** the local users file isn't present, so add `--print`
+to the seed command and copy the emitted `ADMIN_USERS=` value into your host's
+environment (comma-separated `username:scryptHash` pairs).
+
+The legacy single `ADMIN_PASSWORD` (username `ADMIN_USERNAME`, default `admin`)
+still works when no `ADMIN_USERS` / seeded users are configured.
 
 ## Deploying
 
