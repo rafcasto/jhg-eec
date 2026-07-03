@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-02T21:09:46.551Z",
+  "updatedAt": "2026-07-03T06:45:54.348Z",
   "variants": {
     "A": {
       "key": "A",
@@ -12,8 +12,8 @@
       "content": {
         "bookTitle": "THE JOB HACKER KICKSTARTER",
         "bookSubtitle": "7 STEPS TO LAND A JOB YOU LOVE, AT THE SALARY YOU DESERVE, IN THE AI ERA",
-        "bookImage": "/assets/book-cover.jpeg",
-        "bookImageAlt": "The Job Hacker Kickstarter — free 7-lesson email course",
+        "bookImage": "/assets/eec-cover.png",
+        "bookImageAlt": "EEC cover",
         "heroTitle": "How To Land A Job You Love, At The Salary You Deserve, In The AI Era",
         "heroSubtitle": "The Job Hacker Kickstarter is a FREE 7-lesson email course that hands you the modern job-search playbook — even if the old one stopped working for you.",
         "ctaButton": "SEND ME LESSON 1 →",
@@ -100,8 +100,8 @@
       "content": {
         "bookTitle": "THE AI JOB SEARCH REPAIR KIT",
         "bookSubtitle": "THE 7 MISTAKES QUIETLY KILLING YOUR SEARCH — AND THE FIX FOR EACH",
-        "bookImage": "/assets/book-cover.jpeg",
-        "bookImageAlt": "The AI Job Search Repair Kit — free email course",
+        "bookImage": "/assets/eec-cover.png",
+        "bookImageAlt": "EEC cover",
         "heroTitle": "Fix The 7 Mistakes Quietly Killing Your Job Search In The AI Era",
         "heroSubtitle": "The AI Job Search Repair Kit is a FREE email course that diagnoses one mistake job seekers make in the AI era — then hands you the fix. The old playbook is dead; here is the new one.",
         "ctaButton": "SEND ME MISTAKE #1 →",

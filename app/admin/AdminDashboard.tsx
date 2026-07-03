@@ -21,6 +21,33 @@ export default function AdminDashboard({
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<string>("");
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState("");
+  const [applyBoth, setApplyBoth] = useState(true);
+
+  async function uploadCover(file: File) {
+    setUploading(true);
+    setUploadMsg("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+      update((c) => {
+        c.variants[active].content.bookImage = data.path;
+        if (applyBoth) {
+          const other: VariantKey = active === "A" ? "B" : "A";
+          c.variants[other].content.bookImage = data.path;
+        }
+      });
+      setUploadMsg("Uploaded ✓ — click Save changes to publish.");
+    } catch (err) {
+      setUploadMsg(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   // ----- helpers -----
   function update(updater: (c: ABConfig) => void) {
@@ -293,6 +320,43 @@ export default function AdminDashboard({
                 }
               />
             ))}
+            <Field label="Book cover image">
+              <div className="adm-upload">
+                <div className="adm-upload__preview">
+                  {v.content.bookImage ? (
+                    <img src={v.content.bookImage} alt="" />
+                  ) : (
+                    <span>No image</span>
+                  )}
+                </div>
+                <div className="adm-upload__ctrl">
+                  <label className={`adm-btn sm${uploading ? " is-busy" : ""}`}>
+                    {uploading ? "Uploading…" : "Upload new image"}
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                      style={{ display: "none" }}
+                      disabled={uploading}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) uploadCover(f);
+                        e.currentTarget.value = "";
+                      }}
+                    />
+                  </label>
+                  <label className="adm-checkline">
+                    <input
+                      type="checkbox"
+                      checked={applyBoth}
+                      onChange={(e) => setApplyBoth(e.target.checked)}
+                    />
+                    Apply to both versions
+                  </label>
+                  {uploadMsg && <div className="adm-upload__msg">{uploadMsg}</div>}
+                  <div className="adm-hint">PNG, JPG, WEBP, GIF or SVG · up to 5 MB.</div>
+                </div>
+              </div>
+            </Field>
             <div className="adm-row2">
               <TextField label="Book image path" value={v.content.bookImage} onChange={(x) => setContent(active, "bookImage", x)} />
               <TextField label="Book image alt text" value={v.content.bookImageAlt} onChange={(x) => setContent(active, "bookImageAlt", x)} />
@@ -524,6 +588,15 @@ function Styles() {
       .adm-top__r { display: flex; align-items: center; gap: 14px; }
       .adm-link { color: #fff; font-size: 13px; font-weight: 600; text-decoration: none; }
       .adm-user { color: #fff; font-size: 13px; font-weight: 700; background: rgba(255,255,255,.14); padding: 5px 11px; border-radius: 999px; }
+      .adm-upload { display: flex; gap: 14px; align-items: flex-start; }
+      .adm-upload__preview { width: 92px; min-height: 118px; border: 1px solid var(--jh-line); border-radius: 10px; background: var(--jh-paper); display: flex; align-items: center; justify-content: center; overflow: hidden; flex: 0 0 auto; }
+      .adm-upload__preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .adm-upload__preview span { font-size: 11px; color: var(--fg-3); }
+      .adm-upload__ctrl { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+      .adm-upload__ctrl .adm-btn { cursor: pointer; }
+      .adm-upload__ctrl .adm-btn.is-busy { opacity: .6; cursor: progress; }
+      .adm-checkline { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--fg-2); }
+      .adm-upload__msg { font-size: 12px; font-weight: 600; color: var(--rb-green-dark); }
       .adm-wrap { max-width: 860px; margin: 24px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 20px; }
       .adm-card { background: #fff; border: 1px solid var(--jh-line); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-1); }
       .adm-card h2 { font-family: var(--font-display); font-size: 20px; margin: 0 0 4px; }

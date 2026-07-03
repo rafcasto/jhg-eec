@@ -16,3 +16,6 @@ next-env.d.ts
 
 # Admin users (scrypt hashes) — seed locally, never commit
 /data/admin-users.json
+
+# Admin-uploaded images (runtime user content)
+/public/assets/uploads/
