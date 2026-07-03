@@ -125,6 +125,15 @@ This works on serverless (Vercel) as-is, since credentials are in Supabase — n
 local file required. When Supabase isn't configured (pure local dev), login
 falls back to `ADMIN_USERS` / a legacy `ADMIN_PASSWORD`.
 
+## Image uploads
+
+The admin cover uploader stores images in **Supabase Storage** (public bucket
+`eec-assets`, under `covers/`) and saves the returned public URL — so it works
+on serverless (Vercel). Create the bucket once (public, image mime types) in the
+Supabase dashboard, or it can be created via the Storage API with the service
+key. Without Supabase configured (local dev) it falls back to writing
+`public/assets/uploads/`.
+
 ## Deploying
 
 Works on any Node host (Vercel, Fly, a VM). On serverless platforms the `data/`

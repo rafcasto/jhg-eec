@@ -6,6 +6,7 @@ import { isAuthed } from "@/lib/adminAuth";
 export const runtime = "nodejs";
 
 const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+const BUCKET = "eec-assets";
 const EXT_BY_TYPE: Record<string, string> = {
   "image/png": "png",
   "image/jpeg": "jpg",
@@ -14,6 +15,41 @@ const EXT_BY_TYPE: Record<string, string> = {
   "image/gif": "gif",
   "image/svg+xml": "svg",
 };
+
+function supabaseBase(): string | null {
+  const url = process.env.SUPABASE_URL;
+  return url ? url.replace(/\/$/, "") : null;
+}
+
+/** Upload to Supabase Storage; returns the public URL. */
+async function uploadToSupabase(
+  objectPath: string,
+  bytes: Buffer,
+  contentType: string
+): Promise<string> {
+  const base = supabaseBase();
+  const key = process.env.SUPABASE_SECRET_KEY;
+  if (!base || !key) throw new Error("Supabase is not configured.");
+
+  const res = await fetch(
+    `${base}/storage/v1/object/${BUCKET}/${objectPath}`,
+    {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": contentType,
+        "x-upsert": "true",
+      },
+      body: bytes,
+    }
+  );
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Supabase Storage upload failed (${res.status}). ${body}`);
+  }
+  return `${base}/storage/v1/object/public/${BUCKET}/${objectPath}`;
+}
 
 export async function POST(req: NextRequest) {
   if (!isAuthed()) {
@@ -51,21 +87,36 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const dir = path.join(process.cwd(), "public", "assets", "uploads");
+  const filename = `cover-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2, 8)}.${ext}`;
+
+  // Primary: Supabase Storage (works on serverless / Vercel).
+  if (supabaseBase() && process.env.SUPABASE_SECRET_KEY) {
+    try {
+      const url = await uploadToSupabase(`covers/${filename}`, bytes, file.type);
+      return NextResponse.json({ ok: true, path: url });
+    } catch (err) {
+      console.error("[upload] supabase failed:", err);
+      return NextResponse.json(
+        { error: "Could not upload the image to storage. Please try again." },
+        { status: 500 }
+      );
+    }
+  }
+
+  // Fallback: local filesystem (dev only, when Supabase isn't configured).
   try {
+    const dir = path.join(process.cwd(), "public", "assets", "uploads");
     await fs.mkdir(dir, { recursive: true });
-    const filename = `cover-${Date.now()}-${Math.random()
-      .toString(36)
-      .slice(2, 8)}.${ext}`;
     await fs.writeFile(path.join(dir, filename), bytes);
-    const publicPath = `/assets/uploads/${filename}`;
-    return NextResponse.json({ ok: true, path: publicPath });
+    return NextResponse.json({ ok: true, path: `/assets/uploads/${filename}` });
   } catch (err) {
-    console.error("[upload] failed:", err);
+    console.error("[upload] fs failed:", err);
     return NextResponse.json(
       {
         error:
-          "Could not save the image. The server filesystem may be read-only (e.g. on serverless).",
+          "Could not save the image. Configure Supabase for uploads on serverless.",
       },
       { status: 500 }
     );

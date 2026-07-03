@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 
-/** Swap a raster path (.png/.jpg/.webp) to the matching .svg fallback. */
+/** Pick a safe fallback for a cover source. */
 function deriveFallback(src: string): string {
+  // Absolute URLs (e.g. Supabase Storage) — fall back to the bundled SVG.
+  if (/^https?:\/\//i.test(src)) return "/assets/book-cover.svg";
+  // Local raster path — try the matching .svg next to it.
   if (/\.(png|jpe?g|webp)$/i.test(src)) {
     return src.replace(/\.(png|jpe?g|webp)$/i, ".svg");
   }
@@ -11,9 +14,9 @@ function deriveFallback(src: string): string {
 }
 
 /**
- * Renders the book cover image. If the primary source fails to load (e.g. a
- * real PNG hasn't been added yet), it automatically falls back to the matching
- * SVG so the page never shows a broken image.
+ * Renders the book cover image. If the primary source fails to load, it
+ * automatically falls back to a bundled SVG so the page never shows a broken
+ * image.
  */
 export default function BookCover({
   src,
