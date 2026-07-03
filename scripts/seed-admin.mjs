@@ -1,35 +1,27 @@
 #!/usr/bin/env node
 /**
- * Seed / manage admin users for the /admin panel — stored in Supabase.
+ * Manage admin logins — backed by Supabase Auth (GoTrue) + the public.admins
+ * allowlist. Admins sign in to /admin with their Supabase Auth email + password;
+ * their email must also be present in public.admins to be authorized.
  *
- * Credentials live on the existing `public.admins` table (email = username)
- * in a `password_hash` column (added by migration 0002). This script talks to
- * Supabase over the REST API using SUPABASE_URL + SUPABASE_SECRET_KEY, which are
- * read from .env.local automatically.
+ *   npm run seed:admin -- --username you@x.com --password 's3cret!!'   create/update
+ *   npm run seed:admin -- --list                                       list admins
+ *   npm run seed:admin -- --remove you@x.com                           revoke (allowlist)
+ *   npm run seed:admin -- --verify -u you@x.com -p 's3cret!!'          test a password
  *
- *   npm run seed:admin -- --username alice@x.com --password 's3cret!!'   add/update
- *   npm run seed:admin -- --list                                         list admins
- *   npm run seed:admin -- --remove alice@x.com                           revoke login
- *   npm run seed:admin -- --verify -u alice@x.com -p 's3cret!!'          test password
- *   npm run seed:admin -- --migrate-file                                 import users
- *                        from data/admin-users.json into Supabase (keeps hashes)
+ * "create/update" creates the Supabase Auth user (or resets their password if
+ * they already exist) and adds them to the public.admins allowlist.
  *
- * Credentials may also come from SEED_ADMIN_USERNAME / SEED_ADMIN_PASSWORD.
+ * Requires SUPABASE_URL + SUPABASE_SECRET_KEY (read from .env.local). If set,
+ * SUPABASE_ANON_KEY is used for the password grant, else the service key.
  */
 
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const USERS_FILE = path.join(ROOT, "data", "admin-users.json");
 
-const KEYLEN = 64;
-const SCRYPT_PARAMS = { N: 16384, r: 8, p: 1 };
-const SEP = "$";
-
-// ---------- tiny .env loader ----------
 function loadEnv(file) {
   try {
     const raw = fs.readFileSync(path.join(ROOT, file), "utf8");
@@ -47,11 +39,15 @@ function loadEnv(file) {
 loadEnv(".env.local");
 loadEnv(".env");
 
-const SUPABASE_URL = (process.env.SUPABASE_URL || "").replace(/\/$/, "");
-const SUPABASE_KEY = process.env.SUPABASE_SECRET_KEY || "";
+const BASE = (process.env.SUPABASE_URL || "").replace(/\/$/, "");
+const SERVICE = process.env.SUPABASE_SECRET_KEY || "";
+const ANON =
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_PUBLISHABLE_KEY ||
+  SERVICE;
 
-function requireSupabase() {
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
+function requireEnv() {
+  if (!BASE || !SERVICE) {
     console.error(
       "Error: SUPABASE_URL and SUPABASE_SECRET_KEY must be set (in .env.local)."
     );
@@ -59,74 +55,100 @@ function requireSupabase() {
   }
 }
 
-function sbHeaders(extra = {}) {
+function adminHeaders(extra = {}) {
   return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
+    apikey: SERVICE,
+    Authorization: `Bearer ${SERVICE}`,
     "Content-Type": "application/json",
     ...extra,
   };
 }
 
-async function sbFetch(url, init) {
-  const res = await fetch(url, init);
+async function ok(res, label) {
   if (!res.ok) {
     const body = await res.text().catch(() => "");
-    throw new Error(`Supabase ${res.status}: ${body || res.statusText}`);
+    throw new Error(`${label} failed (${res.status}): ${body || res.statusText}`);
   }
   return res;
 }
 
-// ---------- crypto ----------
-function hashPassword(password) {
-  const salt = crypto.randomBytes(16);
-  const key = crypto.scryptSync(password, salt, KEYLEN, SCRYPT_PARAMS);
-  return ["scrypt", salt.toString("hex"), key.toString("hex")].join(SEP);
+// ---------- GoTrue (auth.users) ----------
+async function findAuthUser(email) {
+  const res = await ok(
+    await fetch(`${BASE}/auth/v1/admin/users?per_page=1000`, {
+      headers: adminHeaders(),
+    }),
+    "list auth users"
+  );
+  const data = await res.json();
+  const users = Array.isArray(data) ? data : data.users || [];
+  return users.find((u) => (u.email || "").toLowerCase() === email) || null;
 }
 
-function verifyHash(password, stored) {
-  const parts = String(stored || "").split(SEP);
-  if (parts.length !== 3 || parts[0] !== "scrypt") return false;
-  const salt = Buffer.from(parts[1], "hex");
-  const expected = Buffer.from(parts[2], "hex");
-  if (expected.length === 0) return false;
-  const key = crypto.scryptSync(password, salt, expected.length, SCRYPT_PARAMS);
-  return key.length === expected.length && crypto.timingSafeEqual(key, expected);
+async function createAuthUser(email, password) {
+  await ok(
+    await fetch(`${BASE}/auth/v1/admin/users`, {
+      method: "POST",
+      headers: adminHeaders(),
+      body: JSON.stringify({ email, password, email_confirm: true }),
+    }),
+    "create auth user"
+  );
 }
 
-// ---------- Supabase admins ----------
-async function upsertAdmin(email, hash) {
-  const url = `${SUPABASE_URL}/rest/v1/admins?on_conflict=email`;
-  await sbFetch(url, {
+async function updateAuthPassword(id, password) {
+  await ok(
+    await fetch(`${BASE}/auth/v1/admin/users/${id}`, {
+      method: "PUT",
+      headers: adminHeaders(),
+      body: JSON.stringify({ password, email_confirm: true }),
+    }),
+    "update auth user"
+  );
+}
+
+// ---------- allowlist (public.admins) ----------
+async function ensureAllowlist(email) {
+  await ok(
+    await fetch(`${BASE}/rest/v1/admins?on_conflict=email`, {
+      method: "POST",
+      headers: adminHeaders({
+        Prefer: "resolution=merge-duplicates,return=minimal",
+      }),
+      body: JSON.stringify([{ email }]),
+    }),
+    "allowlist upsert"
+  );
+}
+
+async function removeAllowlist(email) {
+  const res = await ok(
+    await fetch(`${BASE}/rest/v1/admins?email=eq.${encodeURIComponent(email)}`, {
+      method: "DELETE",
+      headers: adminHeaders({ Prefer: "return=representation" }),
+    }),
+    "allowlist delete"
+  );
+  return res.json();
+}
+
+async function listAllowlist() {
+  const res = await ok(
+    await fetch(`${BASE}/rest/v1/admins?select=email&order=email`, {
+      headers: adminHeaders(),
+    }),
+    "allowlist list"
+  );
+  return res.json();
+}
+
+async function passwordGrant(email, password) {
+  const res = await fetch(`${BASE}/auth/v1/token?grant_type=password`, {
     method: "POST",
-    headers: sbHeaders({ Prefer: "resolution=merge-duplicates,return=minimal" }),
-    body: JSON.stringify([{ email, password_hash: hash }]),
+    headers: { apikey: ANON, "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
   });
-}
-
-async function listAdmins() {
-  const url = `${SUPABASE_URL}/rest/v1/admins?select=email,password_hash&order=email`;
-  const res = await sbFetch(url, { headers: sbHeaders() });
-  return res.json();
-}
-
-async function getAdminHash(email) {
-  const url = `${SUPABASE_URL}/rest/v1/admins?select=password_hash&email=eq.${encodeURIComponent(
-    email
-  )}&limit=1`;
-  const res = await sbFetch(url, { headers: sbHeaders() });
-  const rows = await res.json();
-  return Array.isArray(rows) && rows[0] ? rows[0].password_hash : null;
-}
-
-async function revokeAdmin(email) {
-  const url = `${SUPABASE_URL}/rest/v1/admins?email=eq.${encodeURIComponent(email)}`;
-  const res = await sbFetch(url, {
-    method: "PATCH",
-    headers: sbHeaders({ Prefer: "return=representation" }),
-    body: JSON.stringify({ password_hash: null }),
-  });
-  return res.json();
+  return res.ok;
 }
 
 // ---------- args ----------
@@ -153,9 +175,6 @@ function parseArgs(argv) {
       case "--verify":
         out.verify = true;
         break;
-      case "--migrate-file":
-        out.migrateFile = true;
-        break;
       case "--help":
       case "-h":
         out.help = true;
@@ -168,49 +187,45 @@ function parseArgs(argv) {
 }
 
 function usage() {
-  console.log(`Seed / manage admin users (Supabase public.admins)
+  console.log(`Manage admin logins (Supabase Auth + public.admins allowlist)
 
-  npm run seed:admin -- --username <email> --password <pass>   add or update
-  npm run seed:admin -- --list                                 list admins
-  npm run seed:admin -- --remove <email>                       revoke login
+  npm run seed:admin -- --username <email> --password <pass>   create/update + allow
+  npm run seed:admin -- --list                                 list allowlisted admins
+  npm run seed:admin -- --remove <email>                       revoke (remove from allowlist)
   npm run seed:admin -- --verify -u <email> -p <pass>          test a password
-  npm run seed:admin -- --migrate-file                         import data/admin-users.json
 
 Requires SUPABASE_URL and SUPABASE_SECRET_KEY (read from .env.local).`);
 }
 
 // ---------- main ----------
 const args = parseArgs(process.argv.slice(2));
-
 if (args.help) {
   usage();
   process.exit(0);
 }
-
-requireSupabase();
+requireEnv();
 
 try {
   if (args.list) {
-    const rows = await listAdmins();
-    if (!rows.length) {
-      console.log("No rows in public.admins.");
-    } else {
-      console.log(`Admins (${rows.length}):`);
-      for (const r of rows) {
-        console.log(`  • ${r.email}${r.password_hash ? "" : "  (no password — can't log in)"}`);
-      }
+    const rows = await listAllowlist();
+    if (!rows.length) console.log("No admins in public.admins.");
+    else {
+      console.log(`Allowlisted admins (${rows.length}):`);
+      for (const r of rows) console.log(`  • ${r.email}`);
     }
     process.exit(0);
   }
 
   if (args.remove) {
     const email = String(args.remove).trim().toLowerCase();
-    const rows = await revokeAdmin(email);
+    const rows = await removeAllowlist(email);
     if (!rows.length) {
-      console.error(`No admin "${email}" found.`);
+      console.error(`"${email}" was not in the allowlist.`);
       process.exit(1);
     }
-    console.log(`Revoked login for "${email}" (row kept in public.admins).`);
+    console.log(
+      `Removed "${email}" from public.admins (their Supabase Auth account is kept).`
+    );
     process.exit(0);
   }
 
@@ -223,43 +238,24 @@ try {
       console.error("Error: --verify needs --username and --password.");
       process.exit(1);
     }
-    const hash = await getAdminHash(email);
-    if (!hash) {
-      console.error(`No password set for "${email}" in public.admins.`);
+    const okAuth = await passwordGrant(email, pw);
+    if (!okAuth) {
+      console.error(`FAIL — Supabase Auth rejected "${email}".`);
       process.exit(1);
     }
-    if (verifyHash(pw, hash)) {
-      console.log(`OK — password matches for "${email}".`);
-      process.exit(0);
-    }
-    console.error(`FAIL — password does not match for "${email}".`);
-    process.exit(1);
+    const rows = await listAllowlist();
+    const allowed = rows.some(
+      (r) => (r.email || "").toLowerCase() === email
+    );
+    console.log(
+      allowed
+        ? `OK — password valid and "${email}" is an allowlisted admin.`
+        : `Password valid, but "${email}" is NOT in public.admins (no /admin access).`
+    );
+    process.exit(allowed ? 0 : 1);
   }
 
-  if (args.migrateFile) {
-    let users = [];
-    try {
-      const data = JSON.parse(fs.readFileSync(USERS_FILE, "utf8"));
-      users = Array.isArray(data) ? data : data.users || [];
-    } catch {
-      console.error(`Could not read ${USERS_FILE}.`);
-      process.exit(1);
-    }
-    if (!users.length) {
-      console.log("No users in data/admin-users.json to migrate.");
-      process.exit(0);
-    }
-    for (const u of users) {
-      const email = String(u.username || "").trim().toLowerCase();
-      if (!email || !u.hash) continue;
-      await upsertAdmin(email, u.hash);
-      console.log(`  ✓ migrated ${email}`);
-    }
-    console.log(`Migrated ${users.length} user(s) into public.admins.`);
-    process.exit(0);
-  }
-
-  // default: add / update a user
+  // default: create/update
   const email = (args.username || process.env.SEED_ADMIN_USERNAME || "")
     .trim()
     .toLowerCase();
@@ -273,8 +269,17 @@ try {
     console.error("Error: password must be at least 8 characters.");
     process.exit(1);
   }
-  await upsertAdmin(email, hashPassword(password));
-  console.log(`Saved admin "${email}" to public.admins.`);
+
+  const existing = await findAuthUser(email);
+  if (existing) {
+    await updateAuthPassword(existing.id, password);
+    console.log(`Updated Supabase Auth password for "${email}".`);
+  } else {
+    await createAuthUser(email, password);
+    console.log(`Created Supabase Auth user "${email}".`);
+  }
+  await ensureAllowlist(email);
+  console.log(`Allowlisted "${email}" in public.admins. Done.`);
   process.exit(0);
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err));

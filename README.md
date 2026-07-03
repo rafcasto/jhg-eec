@@ -100,35 +100,30 @@ set `ADMIN_USERS`, and set a long random `ADMIN_SESSION_SECRET`.
 
 ## Admin users
 
-The `/admin` panel authenticates with a **username (email) + password**.
-Credentials are stored in **Supabase** on the existing `public.admins` table
-(email = username) in a `password_hash` column — run the
-`supabase/migrations/0002_admins_password.sql` migration once (Supabase SQL
-editor or `supabase db push`). Passwords are scrypt-hashed; the session is an
-HMAC-signed cookie carrying the username.
+The `/admin` panel authenticates against **Supabase Auth (GoTrue)**: admins
+sign in with their Supabase Auth **email + password**. Authorization is gated by
+the existing `public.admins` allowlist — an email must be present there to
+enter `/admin`. On success the app issues an HMAC-signed session cookie.
 
-**Add or update a user** (upserts into `public.admins`):
+No password column or migration is needed: credentials live in Supabase Auth.
+
+**Create/update an admin** (creates or password-resets the Supabase Auth user
+and adds them to the `public.admins` allowlist):
 
 ```bash
 npm run seed:admin -- --username you@example.com --password 'a-strong-password'
-npm run seed:admin -- --list                       # list admins
-npm run seed:admin -- --remove you@example.com     # revoke login
+npm run seed:admin -- --list                     # list allowlisted admins
+npm run seed:admin -- --remove you@example.com   # remove from allowlist (revoke)
 npm run seed:admin -- --verify -u you@example.com -p 'a-strong-password'
-npm run seed:admin -- --migrate-file               # import data/admin-users.json
 ```
 
 The seed script needs `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (read from
-`.env.local`).
+`.env.local`); if set, `SUPABASE_ANON_KEY` is used for the password grant.
+Credentials may also come from `SEED_ADMIN_USERNAME` / `SEED_ADMIN_PASSWORD`.
 
-You can also supply credentials via `SEED_ADMIN_USERNAME` / `SEED_ADMIN_PASSWORD`
-in `.env.local` instead of CLI flags.
-
-**Serverless (Vercel):** the local users file isn't present, so add `--print`
-to the seed command and copy the emitted `ADMIN_USERS=` value into your host's
-environment (comma-separated `username:scryptHash` pairs).
-
-The legacy single `ADMIN_PASSWORD` (username `ADMIN_USERNAME`, default `admin`)
-still works when no `ADMIN_USERS` / seeded users are configured.
+This works on serverless (Vercel) as-is, since credentials are in Supabase — no
+local file required. When Supabase isn't configured (pure local dev), login
+falls back to `ADMIN_USERS` / a legacy `ADMIN_PASSWORD`.
 
 ## Deploying
 

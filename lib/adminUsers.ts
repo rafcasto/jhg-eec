@@ -3,18 +3,16 @@ import fs from "fs";
 import path from "path";
 
 /**
- * Admin credentials for the /admin panel.
+ * Admin authentication for the /admin panel.
  *
- * Primary store: Supabase — the existing `public.admins` table, keyed by
- * `email` (used as the username), with a `password_hash` column added by the
- * 0002 migration. Users are managed with `npm run seed:admin`.
+ * Primary: **Supabase Auth (GoTrue)**. Admins sign in with their Supabase Auth
+ * email + password (the password grant). Authorization is gated by the existing
+ * `public.admins` allowlist table — only emails present there may enter /admin.
  *
- * Fallbacks (checked only when Supabase has no credential for the user):
- *   - ADMIN_USERS env var  — `username:hash` pairs or a JSON array
+ * Fallback (used only when Supabase isn't configured, e.g. pure local dev):
+ *   - ADMIN_USERS env var  — `username:scryptHash` pairs or a JSON array
  *   - data/admin-users.json — local file (gitignored)
  *   - legacy single ADMIN_PASSWORD (username = ADMIN_USERNAME or "admin")
- *
- * Passwords are scrypt hashes: `scrypt$<saltHex>$<keyHex>`.
  */
 
 export interface AdminUser {
@@ -25,14 +23,14 @@ export interface AdminUser {
 const KEYLEN = 64;
 const SCRYPT_PARAMS = { N: 16384, r: 8, p: 1 } as const;
 
-/** Create a `scrypt$salt$key` hash for a plaintext password. */
+/** Create a `scrypt$salt$key` hash (used by the env/file fallback only). */
 export function hashPassword(password: string, salt?: Buffer): string {
   const s = salt ?? crypto.randomBytes(16);
   const key = crypto.scryptSync(password, s, KEYLEN, SCRYPT_PARAMS);
   return `scrypt$${s.toString("hex")}$${key.toString("hex")}`;
 }
 
-/** Constant-time verify of a plaintext password against a stored hash. */
+/** Constant-time verify against a `scrypt$salt$key` hash. */
 export function verifyHash(password: string, stored: string): boolean {
   const parts = (stored || "").split("$");
   if (parts.length !== 3 || parts[0] !== "scrypt") return false;
@@ -54,34 +52,69 @@ export function verifyHash(password: string, stored: string): boolean {
   return key.length === expected.length && crypto.timingSafeEqual(key, expected);
 }
 
-// ---------------- Supabase (primary) ----------------
+// ---------------- Supabase Auth (primary) ----------------
 
 function supabaseBase(): string | null {
   const url = process.env.SUPABASE_URL;
   return url ? url.replace(/\/$/, "") : null;
 }
 
-/** Look up an admin's password hash in Supabase (public.admins.email). */
-async function getSupabaseAdminHash(username: string): Promise<string | null> {
-  const base = supabaseBase();
-  const key = process.env.SUPABASE_SECRET_KEY;
-  if (!base || !key) return null;
+/** apikey for public GoTrue calls: anon/publishable key if set, else service. */
+function apiKey(): string | null {
+  return (
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_PUBLISHABLE_KEY ||
+    process.env.SUPABASE_SECRET_KEY ||
+    null
+  );
+}
 
-  const email = username.trim().toLowerCase();
-  const url =
-    `${base}/rest/v1/admins` +
-    `?select=password_hash&email=eq.${encodeURIComponent(email)}&limit=1`;
+function serviceKey(): string | null {
+  return process.env.SUPABASE_SECRET_KEY || null;
+}
+
+/** True when we can talk to Supabase Auth + the admins allowlist. */
+export function supabaseAuthEnabled(): boolean {
+  return Boolean(supabaseBase() && serviceKey());
+}
+
+/** Verify email + password against Supabase Auth (password grant). */
+async function supabaseSignIn(email: string, password: string): Promise<boolean> {
+  const base = supabaseBase();
+  const key = apiKey();
+  if (!base || !key) return false;
   try {
-    const res = await fetch(url, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` },
+    const res = await fetch(`${base}/auth/v1/token?grant_type=password`, {
+      method: "POST",
+      headers: { apikey: key, "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
       cache: "no-store",
     });
-    if (!res.ok) return null;
-    const rows = (await res.json()) as Array<{ password_hash?: string | null }>;
-    const hash = Array.isArray(rows) && rows[0] ? rows[0].password_hash : null;
-    return hash || null;
+    return res.ok; // 200 => valid credentials
   } catch {
-    return null;
+    return false;
+  }
+}
+
+/** True when the email is present in the public.admins allowlist. */
+async function isAllowlistedAdmin(email: string): Promise<boolean> {
+  const base = supabaseBase();
+  const key = serviceKey();
+  if (!base || !key) return false;
+  const e = email.trim().toLowerCase();
+  try {
+    const res = await fetch(
+      `${base}/rest/v1/admins?select=email&email=eq.${encodeURIComponent(e)}&limit=1`,
+      {
+        headers: { apikey: key, Authorization: `Bearer ${key}` },
+        cache: "no-store",
+      }
+    );
+    if (!res.ok) return false;
+    const rows = (await res.json()) as unknown[];
+    return Array.isArray(rows) && rows.length > 0;
+  } catch {
+    return false;
   }
 }
 
@@ -90,7 +123,6 @@ async function getSupabaseAdminHash(username: string): Promise<string | null> {
 function parseEnvUsers(): AdminUser[] {
   const raw = process.env.ADMIN_USERS?.trim();
   if (!raw) return [];
-
   if (raw.startsWith("[")) {
     try {
       const arr = JSON.parse(raw);
@@ -105,7 +137,6 @@ function parseEnvUsers(): AdminUser[] {
       return [];
     }
   }
-
   return raw
     .split(/[\n,]+/)
     .map((s) => s.trim())
@@ -138,8 +169,7 @@ function parseFileUsers(): AdminUser[] {
   }
 }
 
-/** Fallback users (file overrides env by username). */
-export function listUsers(): AdminUser[] {
+function listUsers(): AdminUser[] {
   const byName = new Map<string, AdminUser>();
   for (const u of parseEnvUsers()) byName.set(u.username.toLowerCase(), u);
   for (const u of parseFileUsers()) byName.set(u.username.toLowerCase(), u);
@@ -150,7 +180,11 @@ function legacyUsername(): string {
   return (process.env.ADMIN_USERNAME || "admin").trim();
 }
 
-/** Verify a username + password. Supabase first, then env/file, then legacy. */
+/**
+ * Verify a login. When Supabase is configured, authenticate against Supabase
+ * Auth and require the email to be in the admins allowlist. Otherwise, fall
+ * back to env/file/legacy credentials for local development.
+ */
 export async function verifyUser(
   username: string,
   password: string
@@ -158,17 +192,18 @@ export async function verifyUser(
   const u = (username || "").trim();
   if (!u || !password) return false;
 
-  // 1. Supabase (primary)
-  const sbHash = await getSupabaseAdminHash(u);
-  if (sbHash) return verifyHash(password, sbHash);
+  if (supabaseAuthEnabled()) {
+    const signedIn = await supabaseSignIn(u, password);
+    if (!signedIn) return false;
+    return isAllowlistedAdmin(u);
+  }
 
-  // 2. Env / file fallback
+  // Fallback (local dev without Supabase)
   const match = listUsers().find(
     (x) => x.username.toLowerCase() === u.toLowerCase()
   );
   if (match) return verifyHash(password, match.hash);
 
-  // 3. Legacy single password
   const legacyPw = process.env.ADMIN_PASSWORD || "";
   if (legacyPw && u.toLowerCase() === legacyUsername().toLowerCase()) {
     const a = Buffer.from(password);
