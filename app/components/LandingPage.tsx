@@ -64,14 +64,14 @@ export default function LandingPage({
               ))}
             </ul>
 
-            <div className="eec-authors__stats">
-              {c.stats.map((s, i) => (
-                <div className="stat-chip" key={i}>
-                  <span className="stat-chip__value">{s.value}</span>
-                  <span className="stat-chip__label">{s.label}</span>
-                </div>
-              ))}
-            </div>
+          <div className="eec-authors__stats">
+            {c.stats.filter(stat => stat.value || stat.label).map((stat, idx) => (
+              <div className="stat-chip" key={idx}>
+                <span className="stat-chip__value">{stat.value}</span>
+                <span className="stat-chip__label">{stat.label}</span>
+              </div>
+            ))}
+          </div>
 
             <SignupForm {...formProps} formId="authors" />
           </div>
