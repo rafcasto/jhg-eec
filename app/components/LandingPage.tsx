@@ -117,6 +117,11 @@ export default function LandingPage({
         <div>
           <img src="/assets/logo-jobhackers.png" alt="Job Hackers Global" />
         </div>
+        <div className="eec-footer__links">
+          <a href="https://jobhackers.global/terms-of-service/" target="_blank" rel="noopener noreferrer">Terms of Service</a>
+          <span aria-hidden="true">·</span>
+          <a href="https://jobhackers.global/privacy-policy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+        </div>
         <div>
           © {new Date().getFullYear()} Job Hackers Global. All rights reserved.
         </div>

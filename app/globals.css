@@ -271,6 +271,10 @@ html, body { margin: 0; padding: 0; background: var(--jh-paper); }
   font-size: 12px;
 }
 .eec-footer img { height: 22px; filter: brightness(0) invert(1); opacity: 0.85; margin-bottom: 10px; display: inline-block; }
+.eec-footer__links { margin-bottom: 8px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; }
+.eec-footer__links a { color: rgba(255, 255, 255, 0.7); text-decoration: none; }
+.eec-footer__links a:hover { color: #fff; text-decoration: underline; }
+.eec-footer__links span { color: rgba(255, 255, 255, 0.35); }
 
 /* ---------------- Thank-you page ---------------- */
 .ty {
