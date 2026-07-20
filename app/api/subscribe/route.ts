@@ -6,6 +6,7 @@ import {
   deriveFirstName,
 } from "@/lib/supabaseLeads";
 import { enrollInSequence } from "@/lib/resendSequences";
+import { enrollInKitSequence } from "@/lib/kitSequences";
 
 export const runtime = "nodejs";
 
@@ -40,21 +41,24 @@ export async function POST(req: NextRequest) {
 
   // Tag: EVENT->REGISTRATION->EEC->{EEC_NAME}->{VERSION}
   const tag = buildTag(variant.eecName, variant.versionLabel);
+  const firstName = deriveFirstName(email);
 
   try {
     // 1. Persist the lead (idempotent via UNIQUE(email, tag, stage)).
     const { created } = await recordLead({
       email,
-      firstName: deriveFirstName(email),
+      firstName,
       tag,
       source,
       variant: variant.key,
       stage: "acquisition",
     });
 
-    // 2. Enroll in the Resend sequence — only for genuinely new registrations,
-    //    so the same person never enters the same sequence twice.
+    // 2. Enroll in the email sequences — only for genuinely new registrations,
+    //    so the same person never enters the same sequence twice. Each provider
+    //    fails independently: a broken one must not cost us the signup.
     let enrolled = false;
+    let kitEnrolled = false;
     if (created) {
       try {
         await enrollInSequence(email, variant.sequence);
@@ -63,9 +67,16 @@ export async function POST(req: NextRequest) {
         // Lead is saved; log and continue so we don't lose the signup.
         console.error("[subscribe] Resend enroll failed:", err);
       }
+
+      try {
+        await enrollInKitSequence(email, { firstName });
+        kitEnrolled = true;
+      } catch (err) {
+        console.error("[subscribe] Kit enroll failed:", err);
+      }
     }
 
-    return NextResponse.json({ ok: true, created, enrolled });
+    return NextResponse.json({ ok: true, created, enrolled, kitEnrolled });
   } catch (err) {
     console.error("[subscribe] failed:", err);
     return NextResponse.json(
