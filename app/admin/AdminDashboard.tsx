@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ABConfig, Variant, VariantKey, CurriculumItem } from "@/lib/types";
+import AnalyticsCard from "./AnalyticsCard";
 
 const KEYS: VariantKey[] = ["A", "B"];
 
@@ -139,6 +140,9 @@ export default function AdminDashboard({
       </header>
 
       <div className="adm-wrap">
+        {/* ---------------- Site analytics (GA4) ---------------- */}
+        <AnalyticsCard />
+
         {/* ---------------- Traffic & status ---------------- */}
         <section className="adm-card">
           <h2>Traffic &amp; A/B split</h2>
