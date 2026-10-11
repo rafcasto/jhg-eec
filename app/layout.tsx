@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import GoogleAnalytics from "./components/GoogleAnalytics";
-import {
-  GoogleTagManagerScript,
-  GoogleTagManagerNoScript,
-} from "./components/GoogleTagManager";
 
 export const metadata: Metadata = {
   title: "Job Hackers Global — Free Email Course",
@@ -24,8 +20,6 @@ export default function RootLayout({
         <link rel="stylesheet" href="/brand/colors_and_type.css" />
       </head>
       <body>
-        <GoogleTagManagerNoScript />
-        <GoogleTagManagerScript />
         <GoogleAnalytics />
         {children}
       </body>
